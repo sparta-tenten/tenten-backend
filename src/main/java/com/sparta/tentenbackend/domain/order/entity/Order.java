@@ -2,6 +2,7 @@ package com.sparta.tentenbackend.domain.order.entity;
 
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
+import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +19,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "p_order")
-public class Order {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

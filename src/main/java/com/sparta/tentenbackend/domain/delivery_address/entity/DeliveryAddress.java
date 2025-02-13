@@ -1,6 +1,7 @@
 package com.sparta.tentenbackend.domain.delivery_address.entity;
 
 import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +16,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "p_delivery_address")
-public class DeliveryAddress {
+public class DeliveryAddress extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
