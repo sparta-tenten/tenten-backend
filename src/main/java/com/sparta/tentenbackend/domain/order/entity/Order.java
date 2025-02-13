@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.order.entity;
 
+import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,4 +42,8 @@ public class Order {
     @OneToOne
     @JoinColumn(name = "payment_id", unique = true)
     private Payment payment;
+
+    @OneToOne
+    @JoinColumn(name = "delivery_address_id", unique = true)
+    private DeliveryAddress deliveryAddress;
 }

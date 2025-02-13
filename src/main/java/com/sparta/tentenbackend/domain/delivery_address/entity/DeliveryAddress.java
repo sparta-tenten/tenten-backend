@@ -1,4 +1,4 @@
-package com.sparta.tentenbackend.domain.payment.entity;
+package com.sparta.tentenbackend.domain.delivery_address.entity;
 
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import jakarta.persistence.CascadeType;
@@ -14,16 +14,19 @@ import lombok.Getter;
 
 @Getter
 @Entity
-@Table(name = "p_payment")
-public class Payment {
+@Table(name = "p_delivery_address")
+public class DeliveryAddress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private Long amount;
+    private String name;
 
-    @OneToOne(mappedBy = "payment", cascade = CascadeType.REMOVE, orphanRemoval = true, optional = false)
+    @Column(nullable = false)
+    private String address;
+
+    @OneToOne(mappedBy = "deliveryAddress", cascade = CascadeType.REMOVE, orphanRemoval = true, optional = false)
     private Order order;
 }
