@@ -30,4 +30,9 @@ public class DeliveryAddress extends BaseEntity {
 
     @OneToOne(mappedBy = "deliveryAddress", cascade = CascadeType.REMOVE, orphanRemoval = true, optional = false)
     private Order order;
+
+    public DeliveryAddress(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
 }

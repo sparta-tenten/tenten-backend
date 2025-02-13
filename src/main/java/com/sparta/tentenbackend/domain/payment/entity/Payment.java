@@ -33,4 +33,9 @@ public class Payment extends BaseEntity {
 
     @OneToOne(mappedBy = "payment", cascade = CascadeType.REMOVE, orphanRemoval = true, optional = false)
     private Order order;
+
+    public Payment(PaymentStatus paymentStatus, Long amount) {
+        this.paymentStatus = paymentStatus;
+        this.amount = amount;
+    }
 }
