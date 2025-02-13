@@ -14,10 +14,12 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "p_payment")
+@NoArgsConstructor
 public class Payment extends BaseEntity {
 
     @Id
