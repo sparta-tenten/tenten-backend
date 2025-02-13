@@ -22,10 +22,11 @@ jobs:
         script: |
           const review_team = ['sinryuji', 'doonghui', 'hanjihae', 'MyYeonbi'];
           const candidate = review_team.filter((e) => e != '${{ github.event.pull_request.user.login }}');
-          const randomReviewer = candidate[Math.floor(Math.random() * candidate.length)];
-          const comment = `🎉 @${randomReviewer} 님 랜덤 리뷰어로 당첨되셨습니다! 리뷰를 부탁드립니다. 🙏`
+          const shuffled = candidate.sort(() => 0.5 - Math.random());
+          const selectedReviewers = shuffled.slice(0, 2);
+          const comment = `🎉 @${selectedReviewers.join(' @')} 님이 랜덤 리뷰어로 선정되었습니다! 리뷰를 부탁드립니다. 🙏`
           core.setOutput('comment', comment)
-          core.setOutput('reviewer', randomReviewer)
+          core.setOutput('reviewers', selectedReviewers.join(','));
     
     - name: comment PR
       uses: mshick/add-pr-comment@v1
@@ -35,8 +36,8 @@ jobs:
         repo-token: ${{ secrets.GH_TOKEN }}
         repo-token-user-login: 'github-actions[bot]'
       
-    - name: Add Pull Request Reviewer
+    - name: Add Pull Request Reviewers
       uses: madrapps/add-reviewers@v1
       with:
-        reviewers: ${{ steps.pick_random_reviwer.outputs.reviewer }}
+        reviewers: ${{ steps.pick_random_reviwer.outputs.reviewers }}
         token: ${{ secrets.GH_TOKEN }}
