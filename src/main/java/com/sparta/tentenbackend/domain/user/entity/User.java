@@ -2,14 +2,22 @@ package com.sparta.tentenbackend.domain.user.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
+import com.sparta.tentenbackend.domain.region.entity.Town;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,8 +43,17 @@ public class User {
     private UserRoleEnum role;              // CUSTOMER, OWNER, MANAGER, MASTER
     @Column(nullable = false)
     private String address;
+    @Column(nullable = false)
+    private String detailAddress;
     @Column(nullable = false, unique = true)
     private String phoneNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "town_code")
+    private Town town;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<DeliveryAddress> deliveryAddressList;
 
     /*
      * @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
