@@ -28,9 +28,14 @@ public class Category extends BaseEntity {
   private String name;
 
   public Category(CategoryRequestDto requestDto) {
-//  public Category(CategoryRequestDto requestDto, User user) {
     this.name = requestDto.getName();
-//    this.user = user;
   }
+
+  /* user 구현 후
+  public Category(CategoryRequestDto requestDto, User user) {
+    this.name = requestDto.getName();
+    this.user = user;
+  }
+   */
 
 }

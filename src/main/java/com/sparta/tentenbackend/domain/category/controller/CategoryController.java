@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/")
 @RequiredArgsConstructor
 public class CategoryController {
   private final CategoryService categoryService;
@@ -18,8 +18,15 @@ public class CategoryController {
   // 카테고리 추가
   @PostMapping("/master/category")
   public CategoryResponseDto createCategory(@RequestBody CategoryRequestDto requestDto) {
-//  public CategoryResponseDto createCategory(@RequestBody CategoryRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
     return categoryService.addCategory(requestDto);
-//    return categoryService.addCategory(requestDto, userDetails.getUser());
   }
+
+  /* user 구현 후
+  // 카테고리 추가
+  @PostMapping("/master/category")
+  public CategoryResponseDto createCategory(@RequestBody CategoryRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    return categoryService.addCategory(requestDto, userDetails.getUser());
+  }
+   */
+
 }

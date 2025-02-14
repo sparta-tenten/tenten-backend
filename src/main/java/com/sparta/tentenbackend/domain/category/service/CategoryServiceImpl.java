@@ -15,10 +15,16 @@ public class CategoryServiceImpl implements CategoryService {
   // 카테고리 추가
   @Override
   public CategoryResponseDto addCategory(CategoryRequestDto requestDto) {
-//  public CategoryResponseDto addCategory(CategoryRequestDto requestDto, User user) {
-    // user role = MASTER인 경우에만 카테고리 생성 가능 or Exception
     Category category = categoryRepository.save(new Category(requestDto));
-//    Category category = categoryRepository.save(new Category(requestDto, user));
     return new CategoryResponseDto(category);
   }
+
+  /* user 구현 후
+  // 카테고리 추가
+  @Override
+  public CategoryResponseDto addCategory(CategoryRequestDto requestDto, User user) {
+    // user role = MASTER인 경우에만 카테고리 생성 가능 or Exception
+    Category category = categoryRepository.save(new Category(requestDto, user));
+  }
+   */
 }

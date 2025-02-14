@@ -38,3 +38,4 @@ out/
 
 ### Environment file ###
 .env
+application-dev.yml
