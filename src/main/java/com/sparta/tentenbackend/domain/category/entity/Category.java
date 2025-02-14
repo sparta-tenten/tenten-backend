@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.category.entity;
 
+import com.sparta.tentenbackend.domain.category.dto.CategoryRequestDto;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,9 +25,12 @@ public class Category extends BaseEntity {
   private UUID id;
 
   @Column(nullable = false)
-  private String question;
+  private String name;
 
-  @Column(nullable = false)
-  private String answer;
+  public Category(CategoryRequestDto requestDto) {
+//  public Category(CategoryRequestDto requestDto, User user) {
+    this.name = requestDto.getName();
+//    this.user = user;
+  }
 
 }
