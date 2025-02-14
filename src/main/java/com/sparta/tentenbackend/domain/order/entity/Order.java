@@ -48,7 +48,9 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    private String deliveryAddress;
+    @OneToOne
+    @JoinColumn(name = "delivery_address_id", nullable = false)
+    private DeliveryAddress deliveryAddress;
 
     public Order(Long totalPrice, DeliveryType deliveryType, OrderType orderType,
         OrderStatus orderStatus) {
