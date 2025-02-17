@@ -1,7 +1,8 @@
 package com.sparta.tentenbackend.domain.delivery_address.controller;
 
-import com.sparta.tentenbackend.domain.delivery_address.dto.DeliveryAddressRequest;
+import com.sparta.tentenbackend.domain.delivery_address.dto.CreateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.dto.DeliveryAddressResponse;
+import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.delivery_address.service.DeliveryAddressService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +31,7 @@ public class DeliveryAddressController {
     @PostMapping
     @Operation(summary = "배송지 추가하기")
     public ResponseEntity<DeliveryAddressResponse> addDeliveryAddress(
-        @RequestBody @Valid DeliveryAddressRequest req) {
+        @RequestBody @Valid CreateDeliveryAddressRequest req) {
         DeliveryAddress deliveryAddress = deliveryAddressService.createDeliveryAddress(req);
 
         return ResponseEntity.ok(new DeliveryAddressResponse(deliveryAddress));
@@ -38,9 +40,19 @@ public class DeliveryAddressController {
     @GetMapping
     @Operation(summary = "배송지 목록 조회")
     public ResponseEntity<Page<DeliveryAddressResponse>> getAllDeliveryAddress(Pageable pageable) {
-        Page<DeliveryAddress> deliveryAddressList = deliveryAddressService.findAllDeliveryAddresses(
+        Page<DeliveryAddress> deliveryAddressList = deliveryAddressService.getDeliveryList(
             pageable);
 
         return ResponseEntity.ok(deliveryAddressList.map(DeliveryAddressResponse::new));
+    }
+
+    @PutMapping
+    @Operation(summary = "배송지 수정")
+    public ResponseEntity<DeliveryAddressResponse> updateDeliveryAddress(
+        @RequestBody @Valid UpdateDeliveryAddressRequest req
+    ) {
+        DeliveryAddress deliveryAddress = deliveryAddressService.updateDeliveryAddress(req);
+
+        return ResponseEntity.ok(new DeliveryAddressResponse(deliveryAddress));
     }
 }

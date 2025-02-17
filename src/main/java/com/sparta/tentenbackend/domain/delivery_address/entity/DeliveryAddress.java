@@ -1,6 +1,6 @@
 package com.sparta.tentenbackend.domain.delivery_address.entity;
 
-import com.sparta.tentenbackend.domain.delivery_address.dto.DeliveryAddressRequest;
+import com.sparta.tentenbackend.domain.delivery_address.dto.CreateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.entity.User;
@@ -38,7 +38,7 @@ public class DeliveryAddress extends BaseEntity {
 
     private String detailAddress;
 
-    @OneToOne(mappedBy = "deliveryAddress", cascade = CascadeType.REMOVE, orphanRemoval = true, optional = false)
+    @OneToOne(mappedBy = "deliveryAddress", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,7 +50,7 @@ public class DeliveryAddress extends BaseEntity {
     private Town town;
 
     // TODO 유저 추가
-    public DeliveryAddress(DeliveryAddressRequest req, Town town) {
+    public DeliveryAddress(CreateDeliveryAddressRequest req, Town town) {
         this.name = req.getName();
         this.address = req.getAddress();
         this.detailAddress = req.getDetailAddress();

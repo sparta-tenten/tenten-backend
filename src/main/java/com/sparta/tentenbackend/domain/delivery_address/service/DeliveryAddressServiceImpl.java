@@ -1,10 +1,12 @@
 package com.sparta.tentenbackend.domain.delivery_address.service;
 
-import com.sparta.tentenbackend.domain.delivery_address.dto.DeliveryAddressRequest;
+import com.sparta.tentenbackend.domain.delivery_address.dto.CreateDeliveryAddressRequest;
+import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.delivery_address.repository.DeliveryAddressRepository;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.region.service.TownService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +23,7 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
     // TODO 유저 추가
     @Override
     @Transactional
-    public DeliveryAddress createDeliveryAddress(DeliveryAddressRequest req) {
+    public DeliveryAddress createDeliveryAddress(CreateDeliveryAddressRequest req) {
         Town town = townService.getTownByCode(req.getTownCode());
         DeliveryAddress deliveryAddress = new DeliveryAddress(req, town);
 
@@ -30,7 +32,23 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DeliveryAddress> findAllDeliveryAddresses(Pageable pageable) {
+    public Page<DeliveryAddress> getDeliveryList(Pageable pageable) {
         return deliveryAddressRepository.findAll(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DeliveryAddress getDeliveryAddressById(UUID id) {
+        return deliveryAddressRepository.findDeliveryAddressById(id);
+    }
+
+    @Override
+    @Transactional
+    public DeliveryAddress updateDeliveryAddress(UpdateDeliveryAddressRequest req) {
+        DeliveryAddress deliveryAddress = getDeliveryAddressById(req.getId());
+        Town town = townService.getTownByCode(req.getTownCode());
+        deliveryAddress.update(req, town);
+
+        return deliveryAddress;
     }
 }
