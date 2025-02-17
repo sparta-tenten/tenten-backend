@@ -1,6 +1,5 @@
 package com.sparta.tentenbackend.domain.order.entity;
 
-import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.Column;
@@ -45,12 +44,10 @@ public class Order extends BaseEntity {
     private OrderStatus orderStatus;
 
     @OneToOne
-    @JoinColumn(name = "payment_id", unique = true)
+    @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @OneToOne
-    @JoinColumn(name = "delivery_address_id", unique = true)
-    private DeliveryAddress deliveryAddress;
+    private String deliveryAddress;
 
     public Order(Long totalPrice, DeliveryType deliveryType, OrderType orderType,
         OrderStatus orderStatus) {

@@ -1,13 +1,17 @@
 package com.sparta.tentenbackend.global.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@RestControllerAdvice
-public class GlobalExceptionAdvice {
+@RestControllerAdvice(annotations = RestController.class)
+@Hidden
+public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = ForbiddenException.class)
     public ResponseEntity forbiddenException(HttpServletRequest req, ForbiddenException e) {
