@@ -1,12 +1,6 @@
 package com.sparta.tentenbackend.global.exception;
 
-import com.sparta.tentenbackend.domain.ai.controller.AiController;
-import com.sparta.tentenbackend.domain.category.controller.CategoryController;
-import com.sparta.tentenbackend.domain.delivery_address.controller.DeliveryAddressController;
-import com.sparta.tentenbackend.domain.order.controller.OrderController;
-import com.sparta.tentenbackend.domain.payment.controller.PaymentController;
-import com.sparta.tentenbackend.domain.review.controller.ReviewController;
-import com.sparta.tentenbackend.domain.user.controller.UserController;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@RestControllerAdvice(annotations = RestController.class, basePackageClasses = {
-    AiController.class,
-    CategoryController.class,
-    DeliveryAddressController.class,
-    OrderController.class,
-    PaymentController.class,
-    ReviewController.class,
-    UserController.class
-})
+@RestControllerAdvice(annotations = RestController.class)
+@Hidden
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = ForbiddenException.class)

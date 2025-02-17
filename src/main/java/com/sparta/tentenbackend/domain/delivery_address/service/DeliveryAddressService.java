@@ -17,4 +17,6 @@ public interface DeliveryAddressService {
     DeliveryAddress updateDeliveryAddress(UpdateDeliveryAddressRequest req);
 
     DeliveryAddress getDeliveryAddressById(UUID id);
+
+    void deleteDeliveryAddressById(UUID id);
 }

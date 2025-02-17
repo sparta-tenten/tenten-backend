@@ -8,11 +8,14 @@ import com.sparta.tentenbackend.domain.delivery_address.service.DeliveryAddressS
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,6 +49,7 @@ public class DeliveryAddressController {
         return ResponseEntity.ok(deliveryAddressList.map(DeliveryAddressResponse::new));
     }
 
+    // TODO AuthenticationPrincipal 추가
     @PutMapping
     @Operation(summary = "배송지 수정")
     public ResponseEntity<DeliveryAddressResponse> updateDeliveryAddress(
@@ -54,5 +58,16 @@ public class DeliveryAddressController {
         DeliveryAddress deliveryAddress = deliveryAddressService.updateDeliveryAddress(req);
 
         return ResponseEntity.ok(new DeliveryAddressResponse(deliveryAddress));
+    }
+
+    // TODO AuthenticationPrincipal 추가
+    @DeleteMapping("/{id}")
+    @Operation(summary = "배송지 삭제")
+    public ResponseEntity<String> deleteDeliveryAddress(
+        @PathVariable UUID id
+    ) {
+        deliveryAddressService.deleteDeliveryAddressById(id);
+
+        return ResponseEntity.ok("배송지 삭제에 성공하였습니다.");
     }
 }
