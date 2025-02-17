@@ -1,15 +1,15 @@
 package com.sparta.tentenbackend.domain.review.service;
 
-import com.sparta.tentenbackend.domain.order.entity.Order;
-import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
+import com.sparta.tentenbackend.domain.category.dto.CategoryRequestDto;
+import com.sparta.tentenbackend.domain.category.dto.CategoryResponseDto;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.review.dto.ReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
-import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,4 +35,40 @@ public class ReviewServiceImpl implements ReviewService {
     Review review = reviewRepository.save(new Review(requestDto));
     return new ReviewResponseDto(review);
   }
+
+  // 리뷰 목록 조회
+  @Override
+  public List<ReviewResponseDto> findAllReviews() {
+    // user.getId() == requestDto.getUserId() 확인
+    // List<Reveiw> reviews = reviewRepository.findAllByUserIdAndIsDeletedFalse(user.getId());
+    List<Review> reviews = reviewRepository.findAllByIsDeletedFalse();
+    List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
+    for (Review review : reviews) {
+      reviewResponseDtoList.add(new ReviewResponseDto(review));
+    }
+    return reviewResponseDtoList;
+  }
+
+  // 리뷰 수정
+  @Override
+  public ReviewResponseDto modifyReview(ReviewRequestDto requestDto) {
+    // user.getId() == requestDto.getUserId() 확인
+    Review review = reviewRepository.findById(requestDto.getId()).orElseThrow(() ->
+        new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+    review.updateById(requestDto);
+    reviewRepository.save(review);
+    return new ReviewResponseDto(review);
+  }
+
+  // 리뷰 삭제
+  @Override
+  public void removeReview(ReviewRequestDto requestDto) {
+    // user.getId() == requestDto.getUserId() 확인
+    Review review = reviewRepository.findById(requestDto.getId()).orElseThrow(() ->
+        new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+    review.markAsDeleted();
+    reviewRepository.save(review);
+  }
+
+
 }

@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.review.entity;
 
+import com.sparta.tentenbackend.domain.category.dto.CategoryRequestDto;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.review.dto.ReviewRequestDto;
 import com.sparta.tentenbackend.global.BaseEntity;
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,5 +51,16 @@ public class Review extends BaseEntity {
     this.grade = requestDto.getGrade();
     this.image = requestDto.getImage();
 //    this.order = order;
+  }
+
+  public void updateById(ReviewRequestDto requestDto) {
+    this.content = requestDto.getContent();
+    this.grade = requestDto.getGrade();
+    this.image = requestDto.getImage();
+  }
+
+  public void markAsDeleted() {
+    this.setDeleted(true);
+    this.setDeletedAt(LocalDateTime.now());
   }
 }

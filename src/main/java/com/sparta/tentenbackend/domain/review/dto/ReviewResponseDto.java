@@ -23,7 +23,7 @@ public class ReviewResponseDto {
 //  private String orderId;
 
   public ReviewResponseDto(Review review) {
-    this.id = review.getId().toString();
+    this.id = review.getId().toString();  // UUID to String
     this.content = review.getContent();
     this.grade = review.getGrade();
     this.image = review.getImage();
