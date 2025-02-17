@@ -1,11 +1,8 @@
 package com.sparta.tentenbackend.domain.delivery_address.entity;
 
+import com.sparta.tentenbackend.domain.delivery_address.dto.DeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
-<<<<<<< HEAD
-import com.sparta.tentenbackend.domain.region.entity.Region;
-=======
 import com.sparta.tentenbackend.domain.region.entity.Town;
->>>>>>> develop
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -39,22 +36,24 @@ public class DeliveryAddress extends BaseEntity {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
     private String detailAddress;
 
     @OneToOne(mappedBy = "deliveryAddress", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "town_code")
+    @JoinColumn(name = "town_code", nullable = false)
     private Town town;
 
-    public DeliveryAddress(String name, String address) {
-        this.name = name;
-        this.address = address;
+    // TODO 유저 추가
+    public DeliveryAddress(DeliveryAddressRequest req, Town town) {
+        this.name = req.getName();
+        this.address = req.getAddress();
+        this.detailAddress = req.getDetailAddress();
+        this.town = town;
     }
 }
