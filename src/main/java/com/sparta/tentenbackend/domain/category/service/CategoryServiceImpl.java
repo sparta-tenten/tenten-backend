@@ -51,7 +51,6 @@ public class CategoryServiceImpl implements CategoryService {
     categoryRepository.save(category);
   }
 
-
     /* user 구현 후 생성/수정/삭제
     // user role = MASTER인 경우에만 가능 or Exception 메서드 따로 빼기
    */
