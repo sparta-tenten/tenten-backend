@@ -6,6 +6,8 @@ import com.sparta.tentenbackend.domain.delivery_address.repository.DeliveryAddre
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.region.service.TownService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,5 +26,11 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
         DeliveryAddress deliveryAddress = new DeliveryAddress(req, town);
 
         return deliveryAddressRepository.save(deliveryAddress);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<DeliveryAddress> findAllDeliveryAddresses(Pageable pageable) {
+        return deliveryAddressRepository.findAll(pageable);
     }
 }
