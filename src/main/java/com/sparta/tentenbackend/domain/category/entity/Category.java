@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,15 @@ public class Category extends BaseEntity {
 
   public Category(CategoryRequestDto requestDto) {
     this.name = requestDto.getName();
+  }
+
+  public void updateById(CategoryRequestDto requestDto) {
+    this.name = requestDto.getName();
+  }
+
+  public void markAsDeleted() { // isDeleted true
+    this.setDeleted(true);
+    this.setDeletedAt(LocalDateTime.now());
   }
 
   /* user 구현 후
