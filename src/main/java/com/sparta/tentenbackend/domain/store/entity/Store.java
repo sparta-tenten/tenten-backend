@@ -1,9 +1,21 @@
 package com.sparta.tentenbackend.domain.store.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import com.sparta.tentenbackend.domain.category.entity.Category;
+import com.sparta.tentenbackend.domain.region.entity.Town;
+import com.sparta.tentenbackend.domain.user.entity.User;
+import com.sparta.tentenbackend.global.BaseEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
@@ -12,7 +24,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "p_store")
-public class Store {
+public class Store extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;  // 가게 ID (UUID)
@@ -31,15 +44,6 @@ public class Store {
     private Category category; // 가게 카테고리 (p_category와 연결)
 
     @ManyToOne
-    @JoinColumn(name = "region_id", nullable = false)
-    private Region region; // 가게 지역 (p_region과 연결)
-
-    private LocalDateTime createdAt; // 생성 시간
-    private String createdBy; // 생성자
-
-    private LocalDateTime updatedAt; // 수정 시간
-    private String updatedBy; // 수정자
-
-    private LocalDateTime deletedAt; // 삭제 시간
-    private String deletedBy; // 삭제자
+    @JoinColumn(name = "town_code", nullable = false)
+    private Town town; // 가게 지역 (p_town과 연결)
 }
