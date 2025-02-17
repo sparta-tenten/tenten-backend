@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class DeliveryAddressRequest {
+public class CreateDeliveryAddressRequest {
 
     @NotBlank
     private String name;
