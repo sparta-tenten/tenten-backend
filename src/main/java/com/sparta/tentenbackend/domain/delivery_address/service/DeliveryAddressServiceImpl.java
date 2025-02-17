@@ -46,9 +46,20 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
     @Transactional
     public DeliveryAddress updateDeliveryAddress(UpdateDeliveryAddressRequest req) {
         DeliveryAddress deliveryAddress = getDeliveryAddressById(req.getId());
+        // TODO 유저 검증 로직 추가
         Town town = townService.getTownByCode(req.getTownCode());
         deliveryAddress.update(req, town);
 
         return deliveryAddress;
+    }
+
+    @Override
+    @Transactional
+    public void deleteDeliveryAddressById(UUID id) {
+        DeliveryAddress deliveryAddress = getDeliveryAddressById(id);
+
+        // TODO 유저 검증 로직 추가
+
+        deliveryAddress.setDeleted(true);
     }
 }
