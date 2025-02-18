@@ -1,10 +1,23 @@
 package com.sparta.tentenbackend.domain.menu.entity;
 
 import com.sparta.tentenbackend.domain.order.entity.Order;
-import jakarta.persistence.*;
-import lombok.*;
-import java.math.BigInteger;
+import com.sparta.tentenbackend.global.BaseEntity;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.List;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "p_menu_order")
@@ -13,12 +26,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MenuOrder {
+public class MenuOrder extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private BigInteger quantity;
+    private Long quantity;
 
     @ManyToOne
     @JoinColumn(name = "menu_id")
@@ -28,16 +42,16 @@ public class MenuOrder {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @OneToMany(mappedBy = "menuOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MenuOrderOption> menuOrderOptionList;
+
     private String createdBy;
     private String updatedBy;
     private String deletedBy;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date createdAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date updatedAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date deletedAt;
+    public MenuOrder(Menu menu, Order order, Long quantity) {
+        this.menu = menu;
+        this.order = order;
+        this.quantity = quantity;
+    }
 }

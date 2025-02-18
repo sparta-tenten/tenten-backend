@@ -15,8 +15,8 @@ public class OrderResponse {
     private final DeliveryType deliveryType;
     private final OrderType orderType;
     private final OrderStatus orderStatus;
+    // TODO List<MenuResponse> 추가하기
     // TODO PaymentResponse 추가하기
-    // TODO MenuOrderResponse 추가하기
 
     public OrderResponse(Order order) {
         this.id = order.getId();

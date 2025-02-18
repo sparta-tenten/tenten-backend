@@ -1,8 +1,20 @@
 package com.sparta.tentenbackend.domain.menu.entity;
-import jakarta.persistence.*;
-import lombok.*;
-import java.math.BigInteger;
+
+import com.sparta.tentenbackend.global.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "p_menu_option")
@@ -11,14 +23,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MenuOption {
+public class MenuOption extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String category;
 
-    private BigInteger price;
+    @Column(nullable = false)
+    private String name;
+
+    private Long price;
 
     @ManyToOne
     @JoinColumn(name = "menu_id")
@@ -27,13 +43,4 @@ public class MenuOption {
     private String createdBy;
     private String updatedBy;
     private String deletedBy;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date createdAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date updatedAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date deletedAt;
 }
