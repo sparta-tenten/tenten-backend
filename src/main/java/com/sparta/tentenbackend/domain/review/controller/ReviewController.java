@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReviewController {
   private final ReviewService reviewService;
   // TODO 리뷰 생성, 수정, 삭제에 user 넣기
+  // @AuthenticationPrincipal UserDetailsImpl userDetails
 
   // 리뷰 만들기
   @PostMapping("/review")

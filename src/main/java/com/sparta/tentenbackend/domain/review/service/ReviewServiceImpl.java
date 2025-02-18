@@ -22,6 +22,12 @@ public class ReviewServiceImpl implements ReviewService {
   private final ReviewRepository reviewRepository;
   private final OrderRepository orderRepository;
   // TODO 리뷰 생성, 수정, 삭제 user 넣기
+  // 로그인한 유저가 주문한 유저인지 확인
+//  private void confirmYouAreOrderUser(User user, Order order) {
+//    if (!user.getId().equals(order.getUser().getId())) {
+//      throw new ForbiddenException("본인의 주문에 대해서만 리뷰를 작성할 수 있습니다.");
+//    }
+//  }
 
   // 리뷰 만들기
   @Override
@@ -31,6 +37,8 @@ public class ReviewServiceImpl implements ReviewService {
 //    Order order = orderRepository.findById(orderId).orElseThrow(() -> {
 //      throw new NotFoundException("해당 주문을 찾을 수 없습니다.");
 //    });
+//    // 로그인한 유저가 주문한 유저인지 확인
+//    confirmYouAreOrderUser(user, order);
 //    // 배달완료인 주문내역인 경우에만 리뷰 작성 가능
 //    if (order.getOrderStatus() != OrderStatus.DELIVERY_COMPLETED) {
 //      throw new BadRequestException("리뷰는 배달완료된 주문에 대해서만 작성할 수 있습니다.");
