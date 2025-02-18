@@ -6,8 +6,6 @@ import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
