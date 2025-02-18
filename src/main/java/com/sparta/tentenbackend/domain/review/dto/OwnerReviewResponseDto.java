@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.review.dto;
 
+import com.sparta.tentenbackend.domain.review.entity.OwnerReview;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,4 +14,10 @@ public class OwnerReviewResponseDto {
 
   // 리뷰 ID
   private String reviewId;
+
+  public OwnerReviewResponseDto(OwnerReview ownerReview) {
+    this.id = ownerReview.getId().toString();
+    this.content = ownerReview.getContent();
+    this.reviewId = ownerReview.getReview().getId().toString();
+  }
 }
