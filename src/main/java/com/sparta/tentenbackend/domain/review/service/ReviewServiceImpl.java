@@ -1,7 +1,5 @@
 package com.sparta.tentenbackend.domain.review.service;
 
-import com.sparta.tentenbackend.domain.category.dto.CategoryRequestDto;
-import com.sparta.tentenbackend.domain.category.dto.CategoryResponseDto;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.review.dto.ReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
@@ -11,13 +9,19 @@ import com.sparta.tentenbackend.global.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
   private final ReviewRepository reviewRepository;
   private final OrderRepository orderRepository;
+  // TODO 리뷰 생성, 수정, 삭제 user 넣기
 
   // 리뷰 만들기
   @Override
@@ -38,19 +42,19 @@ public class ReviewServiceImpl implements ReviewService {
 
   // 리뷰 목록 조회
   @Override
-  public List<ReviewResponseDto> findAllReviews() {
+  public Page<ReviewResponseDto> findAllReviews(int page, int size, String sortBy, boolean isAsc) {
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    Pageable pageable = PageRequest.of(page, size, sort);
     // user.getId() == requestDto.getUserId() 확인
-    // List<Reveiw> reviews = reviewRepository.findAllByUserIdAndIsDeletedFalse(user.getId());
-    List<Review> reviews = reviewRepository.findAllByIsDeletedFalse();
-    List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
-    for (Review review : reviews) {
-      reviewResponseDtoList.add(new ReviewResponseDto(review));
-    }
-    return reviewResponseDtoList;
+    // Page<Review> reviews = reviewRepository.findAllByUserIdAndIsDeletedFalse(user.getId());
+    Page<Review> reviews = reviewRepository.findAllByIsDeletedFalse(pageable);
+    return reviews.map(ReviewResponseDto::new);
   }
 
   // 리뷰 수정
   @Override
+  @Transactional
   public ReviewResponseDto modifyReview(ReviewRequestDto requestDto) {
     // user.getId() == requestDto.getUserId() 확인
     Review review = reviewRepository.findById(requestDto.getId()).orElseThrow(() ->
@@ -62,6 +66,7 @@ public class ReviewServiceImpl implements ReviewService {
 
   // 리뷰 삭제
   @Override
+  @Transactional
   public void removeReview(ReviewRequestDto requestDto) {
     // user.getId() == requestDto.getUserId() 확인
     Review review = reviewRepository.findById(requestDto.getId()).orElseThrow(() ->
@@ -69,6 +74,5 @@ public class ReviewServiceImpl implements ReviewService {
     review.markAsDeleted();
     reviewRepository.save(review);
   }
-
 
 }
