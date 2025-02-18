@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.order.entity;
 
+import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.Column;

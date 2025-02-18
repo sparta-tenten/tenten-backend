@@ -6,6 +6,7 @@ import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ public class ReviewServiceImpl implements ReviewService {
 
   // 리뷰 만들기
   @Override
+  @Transactional
   public ReviewResponseDto addReview(ReviewRequestDto requestDto) {
 //    UUID orderId = UUID.fromString(requestDto.getOrderId());
 //    // 주문내역 불러오기
@@ -73,9 +75,9 @@ public class ReviewServiceImpl implements ReviewService {
   // 리뷰 삭제
   @Override
   @Transactional
-  public void removeReview(ReviewRequestDto requestDto) {
+  public void removeReview(String reviewId) {
     // user.getId() == requestDto.getUserId() 확인
-    Review review = reviewRepository.findById(requestDto.getId()).orElseThrow(() ->
+    Review review = reviewRepository.findById(UUID.fromString(reviewId)).orElseThrow(() ->
         new NotFoundException("해당 리뷰는 존재하지 않습니다."));
     review.markAsDeleted();
     reviewRepository.save(review);

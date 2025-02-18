@@ -46,8 +46,8 @@ public class ReviewController {
 
   // 리뷰 삭제
   @DeleteMapping("/review")
-  public String deleteReview(@RequestBody ReviewRequestDto requestDto) {
-    reviewService.removeReview(requestDto);
+  public String deleteReview(@RequestParam String reviewId) {
+    reviewService.removeReview(reviewId);
     return "리뷰 삭제를 완료했습니다.";
   }
 

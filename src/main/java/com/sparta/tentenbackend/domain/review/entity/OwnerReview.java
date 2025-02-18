@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,5 +40,14 @@ public class OwnerReview extends BaseEntity {
   public OwnerReview(OwnerReviewRequestDto requestDto, Review review) {
     this.content = requestDto.getContent();
     this.review = review;
+  }
+
+  public void updateById(OwnerReviewRequestDto requestDto) {
+    this.content = requestDto.getContent();
+  }
+
+  public void markAsDeleted() {
+    this.setDeleted(true);
+    this.setDeletedAt(LocalDateTime.now());
   }
 }

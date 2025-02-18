@@ -32,23 +32,17 @@ public class OwnerReviewController {
     return ownerReviewService.addOwnerReview(requestDto);
   }
 
-//  // 리뷰 목록 조회
-//  @GetMapping("/review")
-//  public Page<ReviewResponseDto> getAllReviews(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
-//    return reviewService.findAllReviews(page-1, size, sortBy, isAsc);
-//  }
-//
-//  // 리뷰 수정
-//  @PutMapping("/review")
-//  public ReviewResponseDto updateReview(@RequestBody ReviewRequestDto requestDto) {
-//    return reviewService.modifyReview(requestDto);
-//  }
-//
-//  // 리뷰 삭제
-//  @DeleteMapping("/review")
-//  public String deleteReview(@RequestBody ReviewRequestDto requestDto) {
-//    reviewService.removeReview(requestDto);
-//    return "리뷰 삭제를 완료했습니다.";
-//  }
+  // 리뷰 수정
+  @PutMapping("/review")
+  public OwnerReviewResponseDto updateOwnerReview(@RequestBody OwnerReviewRequestDto requestDto) {
+    return ownerReviewService.modifyOwnerReview(requestDto);
+  }
+
+  // 리뷰 삭제
+  @DeleteMapping("/review")
+  public String deleteOwnerReview(@RequestParam String ownerReviewId) {
+    ownerReviewService.removeOwnerReview(ownerReviewId);
+    return "답글 삭제를 완료했습니다.";
+  }
 
 }

@@ -12,5 +12,5 @@ public interface ReviewService {
 
   ReviewResponseDto modifyReview(ReviewRequestDto requestDto);
 
-  void removeReview(ReviewRequestDto requestDto);
+  void removeReview(String reviewId);
 }
