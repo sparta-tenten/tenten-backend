@@ -96,6 +96,7 @@ public class ReviewServiceImpl implements ReviewService {
     // user.getId() == requestDto.getUserId() 확인
     Review review = reviewRepository.findById(UUID.fromString(reviewId)).orElseThrow(() ->
         new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+    s3Service.deleteFile(review.getImage());
     review.markAsDeleted();
     reviewRepository.save(review);
   }
