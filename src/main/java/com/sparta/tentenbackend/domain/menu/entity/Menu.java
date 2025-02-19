@@ -1,3 +1,4 @@
+
 package com.sparta.tentenbackend.domain.menu.entity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,3 +48,4 @@ public class Menu {
 
 
 }
+

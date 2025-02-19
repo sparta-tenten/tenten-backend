@@ -1,3 +1,4 @@
+
 package com.sparta.tentenbackend.domain.menu.entity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,3 +38,4 @@ public class MenuOption {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date deletedAt;
 }
+
