@@ -12,7 +12,7 @@ public interface OrderService {
 
     Order createOrder(OrderRequest req);
 
-    void ownerCancelOrder(UUID orderId);
+    void cancelOrder(UUID orderId);
 
     Order getOrderById(UUID orderId);
 

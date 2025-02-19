@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum OrderStatus {
+    WAITING_ORDER_RECEIVE("WAITING_ORDER_RECEIVE"),
     ORDER_RECEIVED("ORDER_RECEIVED"),
     COOKING("COOKING"),
     DELIVERING("DELIVERING"),

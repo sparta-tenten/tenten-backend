@@ -40,7 +40,8 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(pageable);
     }
 
-    // TODO User 추가
+    // TODO User(주문한 사람) 추가
+    // TODO Store 추가
     @Override
     @Transactional
     public Order createOrder(OrderRequest req) {
@@ -86,9 +87,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void ownerCancelOrder(UUID orderId) {
+    public void cancelOrder(UUID orderId) {
         Order order = getOrderById(orderId);
         // TODO 유저 검증 로직 추가
+        // TODO 유저가 CUSTOMER라면 주문 접수 대기중일때만 취소 가능하도록
         order.setOrderStatus(OrderStatus.CANCELLED);
     }
 
