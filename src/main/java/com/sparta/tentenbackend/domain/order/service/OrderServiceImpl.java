@@ -9,7 +9,9 @@ import com.sparta.tentenbackend.domain.menu.repository.MenuRepository;
 import com.sparta.tentenbackend.domain.order.dto.OrderMenuRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
+import com.sparta.tentenbackend.global.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -78,5 +80,21 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalPrice(totalPrice);
 
         return orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrder(UUID orderId) {
+        Order order = getOrderById(orderId);
+        // TODO 유저 검증 로직 추가
+        order.setOrderStatus(OrderStatus.CANCELLED);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Order getOrderById(UUID orderId) {
+        return orderRepository.findById(orderId).orElseThrow(
+            () -> new NotFoundException("존재하지 않는 주문입니다.")
+        );
     }
 }
