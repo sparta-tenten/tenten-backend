@@ -4,6 +4,7 @@ import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.service.ReviewService;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public class ReviewController {
 
   // 리뷰 만들기
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ReviewResponseDto> createReview(@RequestPart("review") CreateReviewRequestDto requestDto,
+  public ResponseEntity<ReviewResponseDto> createReview(@Valid @RequestPart("review") CreateReviewRequestDto requestDto,
       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
     if (file != null) { // 리뷰 이미지 파일이 null이 아닐 경우
       requestDto = new CreateReviewRequestDto(requestDto.getContent(), requestDto.getGrade(), file);
@@ -47,7 +48,7 @@ public class ReviewController {
 
   // 리뷰 수정
   @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ReviewResponseDto> updateReview(@RequestPart("review") UpdateReviewRequestDto requestDto,
+  public ResponseEntity<ReviewResponseDto> updateReview(@Valid @RequestPart("review") UpdateReviewRequestDto requestDto,
       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
     if (file != null) {
       requestDto = new UpdateReviewRequestDto(requestDto.getId(), requestDto.getContent(), requestDto.getGrade(), file);
