@@ -11,6 +11,8 @@ import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
+import com.sparta.tentenbackend.domain.store.entity.Store;
+import com.sparta.tentenbackend.domain.store.service.StoreService;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
     private final MenuOptionRepository menuOptionRepository;
+    private final StoreService storeService;
 
     // TODO User 아이디 기준으로 찾기로 수정
     @Override
@@ -46,6 +49,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order createOrder(OrderRequest req) {
         Order order = new Order(req);
+        Store store = storeService.getStoreById(req.getStoreId());
+        order.setStore(store);
 
         List<UUID> menuIdList = req.getOrderMenuRequestList().stream().map(OrderMenuRequest::getId)
             .toList();

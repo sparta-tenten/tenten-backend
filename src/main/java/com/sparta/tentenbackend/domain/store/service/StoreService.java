@@ -80,4 +80,10 @@ public class StoreService {
 
         storeRepository.delete(store);
     }
+
+    @Transactional(readOnly = true)
+    public Store getStoreById(UUID storeId) {
+        return storeRepository.findById(storeId)
+            .orElseThrow(() -> new NotFoundException("해당 가게를 찾을 수 없습니다."));
+    }
 }
