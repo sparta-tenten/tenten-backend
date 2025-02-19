@@ -18,6 +18,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -69,6 +72,10 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime cancelledAt;
+    private Long cancelledBy;
+
     public Order(Long totalPrice, DeliveryType deliveryType, OrderType orderType,
         OrderStatus orderStatus) {
         this.totalPrice = totalPrice;
@@ -84,5 +91,11 @@ public class Order extends BaseEntity {
         this.request = req.getRequest();
         this.orderType = req.getOrderType();
         this.orderStatus = OrderStatus.ORDER_RECEIVED;
+    }
+
+    public void cancel(Long cancelUserId) {
+        this.orderStatus = OrderStatus.CANCELLED;
+        this.cancelledAt = LocalDateTime.now();
+        this.cancelledBy = cancelUserId;
     }
 }

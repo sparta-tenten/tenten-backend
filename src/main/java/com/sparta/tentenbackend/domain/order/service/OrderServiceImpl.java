@@ -9,7 +9,6 @@ import com.sparta.tentenbackend.domain.menu.repository.MenuRepository;
 import com.sparta.tentenbackend.domain.order.dto.OrderMenuRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
-import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
@@ -96,7 +95,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = getOrderById(orderId);
         // TODO 유저 검증 로직 추가
         // TODO 유저가 CUSTOMER라면 주문 접수 대기중일때만 취소 가능하도록
-        order.setOrderStatus(OrderStatus.CANCELLED);
+        // TODO cancel()에 파라미터로 User 추가
+//        order.cancel();
     }
 
     @Override
