@@ -1,3 +1,4 @@
+
 package com.sparta.tentenbackend.domain.menu.repository;
 import com.sparta.tentenbackend.domain.menu.entity.MenuOrderOption;
 import org.springframework.data.jpa.repository.JpaRepository;
