@@ -1,6 +1,6 @@
 package com.sparta.tentenbackend.domain.menu.entity;
 
-import com.sparta.tentenbackend.domain.delivery_address.order.entity.Order;
+import com.sparta.tentenbackend.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigInteger;

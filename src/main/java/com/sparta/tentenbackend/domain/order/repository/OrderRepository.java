@@ -1,6 +1,6 @@
-package com.sparta.tentenbackend.domain.delivery_address.order.repository;
+package com.sparta.tentenbackend.domain.order.repository;
 
-import com.sparta.tentenbackend.domain.delivery_address.order.entity.Order;
+import com.sparta.tentenbackend.domain.order.entity.Order;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
