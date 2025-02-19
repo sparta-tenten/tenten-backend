@@ -40,8 +40,9 @@ public class ReviewController {
 
   // 리뷰 목록 조회
   @GetMapping
-  public Page<ReviewResponseDto> getAllReviews(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
-    return reviewService.findAllReviews(page-1, size, sortBy, isAsc);
+  public ResponseEntity<Page<ReviewResponseDto>> getAllReviews(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+    Page<ReviewResponseDto> reviews = reviewService.findAllReviews(page - 1, size, sortBy, isAsc);
+    return ResponseEntity.ok(reviews);
   }
 
   // 리뷰 수정
@@ -57,9 +58,9 @@ public class ReviewController {
 
   // 리뷰 삭제
   @DeleteMapping
-  public String deleteReview(@RequestParam String reviewId) {
+  public ResponseEntity<String> deleteReview(@RequestParam String reviewId) {
     reviewService.removeReview(reviewId);
-    return "리뷰 삭제를 완료했습니다.";
+    return ResponseEntity.ok("리뷰 삭제를 완료했습니다.");
   }
 
 }

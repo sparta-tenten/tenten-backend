@@ -18,28 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OwnerReviewController {
   private final OwnerReviewService ownerReviewService;
-  // TODO 리뷰 생성, 수정, 삭제에 user 넣기
+  // TODO 사장님의 리뷰 생성, 수정, 삭제에 user 넣기
   // @AuthenticationPrincipal UserDetailsImpl userDetails
 
-  // 리뷰 만들기
+  // 리뷰에 사장님 답글 달기
   @PostMapping
   public ResponseEntity<OwnerReviewResponseDto> createOwnerReview(@RequestBody OwnerReviewRequestDto requestDto) {
     OwnerReviewResponseDto response = ownerReviewService.addOwnerReview(requestDto);
     return ResponseEntity.ok(response);
   }
 
-  // 리뷰 수정
+  // 답글 수정
   @PutMapping
   public ResponseEntity<OwnerReviewResponseDto> updateOwnerReview(@RequestBody OwnerReviewRequestDto requestDto) {
     OwnerReviewResponseDto response = ownerReviewService.modifyOwnerReview(requestDto);
     return ResponseEntity.ok(response);
   }
 
-  // 리뷰 삭제
+  // 답글 삭제
   @DeleteMapping
   public ResponseEntity<String> deleteOwnerReview(@RequestParam String ownerReviewId) {
     ownerReviewService.removeOwnerReview(ownerReviewId);
-    return ResponseEntity.ok("답글 삭제를 완료했습니다.");
+    return ResponseEntity.ok("답글 삭제 완료했습니다.");
   }
 
 }
