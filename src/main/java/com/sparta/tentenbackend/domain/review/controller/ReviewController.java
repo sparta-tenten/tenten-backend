@@ -1,15 +1,17 @@
 package com.sparta.tentenbackend.domain.review.controller;
 
 import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
-import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
+import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
