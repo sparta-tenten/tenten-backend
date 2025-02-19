@@ -29,7 +29,6 @@ public class StoreService {
             .orElseThrow(() -> new NotFoundException("Category not found"));
 
         Store store = new Store(
-            UUID.randomUUID(),
             requestDto.getName(),
             requestDto.getAddress(),
             requestDto.getPhoneNumber(),

@@ -1,20 +1,17 @@
 package com.sparta.tentenbackend.domain.store.entity;
 
 import com.sparta.tentenbackend.domain.category.entity.Category;
-import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.BaseEntity;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,9 +31,15 @@ public class Store extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;  // 가게 ID (UUID)
 
+    @Column(nullable = false)
     private String name;  // 가게명
+
+    @Column(nullable = false)
     private String address;  // 가게 주소
+
+    @Column(nullable = false)
     private String phoneNumber;  // 전화번호
+
     private String image;  // 가게 이미지 URL
 
     @ManyToOne
@@ -51,6 +54,13 @@ public class Store extends BaseEntity {
     @JoinColumn(name = "town_code", nullable = false)
     private Town town; // 가게 지역 (p_town과 연결)
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Order> orderList;
+    public Store(String name, String address, String phoneNumber, String image, User user,
+        Category category, Town town) {
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.image = image;
+        this.user = user;
+        this.category = category;
+    }
 }
