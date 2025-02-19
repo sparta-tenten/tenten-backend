@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,10 +33,16 @@ public class OwnerOrderController {
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
     }
 
-    @PostMapping("/cancel/{orderId}")
-    @Operation(summary = "사장님 주문 취소하기")
-    public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId) {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/cancel/{orderId}")
+//    @Operation(summary = "사장님 주문 취소하기")
+//    public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId) {
+//        orderService.cancelOrder(orderId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PostMapping
+//    @Operation(summary = "사장님의 주문 접수")
+//    public ResponseEntity<OrderResponse> order(@RequestBody OrderRequest orderRequest) {
+//
+//    }
 }

@@ -4,7 +4,9 @@ import com.sparta.tentenbackend.domain.menu.entity.MenuOrder;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.domain.store.entity.Store;
+import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import com.sparta.tentenbackend.global.BaseEntity;
+import com.sparta.tentenbackend.global.exception.BadRequestException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,12 +59,8 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @Column(nullable = false)
     private String deliveryAddress;
-
-    @Column(nullable = false)
     private String phoneNumber;
-
     private String request;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -84,13 +82,22 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
-    public Order(OrderRequest req) {
+    public Order(OrderRequest req, UserRoleEnum userRole) {
         this.deliveryType = req.getDeliveryType();
-        this.deliveryAddress = req.getDeliveryAddress();
-        this.phoneNumber = req.getPhoneNumber();
         this.request = req.getRequest();
         this.orderType = req.getOrderType();
-        this.orderStatus = OrderStatus.ORDER_RECEIVED;
+        if (userRole.equals(UserRoleEnum.CUSTOMER)) {
+            this.orderStatus = OrderStatus.WAITING_ORDER_RECEIVE;
+        } else {
+            this.orderStatus = OrderStatus.ORDER_RECEIVED;
+        }
+        if (req.getDeliveryType().equals(DeliveryType.DELIVERY)) {
+            if (req.getDeliveryAddress() == null || req.getPhoneNumber() == null) {
+                throw new BadRequestException("배달 주문 시 주소와 전화번호가 필요합니다.");
+            }
+            this.deliveryAddress = req.getDeliveryAddress();
+            this.phoneNumber = req.getPhoneNumber();
+        }
     }
 
     public void cancel(Long cancelUserId) {

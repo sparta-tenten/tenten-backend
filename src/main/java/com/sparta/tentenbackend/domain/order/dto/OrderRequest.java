@@ -18,17 +18,12 @@ public class OrderRequest {
     @Size(min = 1)
     private List<OrderMenuRequest> orderMenuRequestList;
     @NotBlank
-    private String address;
-    @NotBlank
     private DeliveryType deliveryType;
     @NotBlank
     private OrderType orderType;
     @NotBlank
-    private String deliveryAddress;
-    @NotBlank
-    private String phoneNumber;
-    @NotBlank
-    private String request;
-    @NotBlank
     private UUID storeId;
+    private String deliveryAddress;
+    private String phoneNumber;
+    private String request;
 }

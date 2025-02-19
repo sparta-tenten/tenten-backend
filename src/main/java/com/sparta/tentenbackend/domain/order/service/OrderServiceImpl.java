@@ -12,6 +12,7 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
+import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,11 +44,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // TODO User(주문한 사람) 추가
-    // TODO Store 추가
     @Override
     @Transactional
     public Order createOrder(OrderRequest req) {
-        Order order = new Order(req);
+        // TODO User의 Role 넘기기
+        Order order = new Order(req, UserRoleEnum.CUSTOMER);
         Store store = storeService.getStoreById(req.getStoreId());
         order.setStore(store);
 
@@ -94,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(UUID orderId) {
         Order order = getOrderById(orderId);
         // TODO 유저 검증 로직 추가
-        // TODO 유저가 CUSTOMER라면 주문 접수 대기중일때만 취소 가능하도록
+        // TODO 유저가 CUSTOMER라면 주문 접수 대기중일때만 취소 가능하도록 && 주문 생성 후 5분 이내에만 취소 가능하도록
         // TODO cancel()에 파라미터로 User 추가
 //        order.cancel();
     }
