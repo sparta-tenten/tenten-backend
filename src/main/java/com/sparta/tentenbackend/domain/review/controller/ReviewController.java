@@ -1,13 +1,10 @@
 package com.sparta.tentenbackend.domain.review.controller;
 
-import com.sparta.tentenbackend.domain.category.dto.CategoryRequestDto;
-import com.sparta.tentenbackend.domain.category.dto.CategoryResponseDto;
-import com.sparta.tentenbackend.domain.review.dto.ReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
-import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.review.service.ReviewService;
 import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -33,11 +29,10 @@ public class ReviewController {
 
   // 리뷰 만들기
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ReviewResponseDto> createReview(@RequestPart("review") ReviewRequestDto requestDto,
+  public ResponseEntity<ReviewResponseDto> createReview(@RequestPart("review") CreateReviewRequestDto requestDto,
       @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
-    if (file != null) {
-      System.out.println("File Name : " + file.getOriginalFilename());
-      requestDto = new ReviewRequestDto(requestDto.getContent(), requestDto.getGrade(), file);
+    if (file != null) { // 리뷰 이미지 파일이 null이 아닐 경우
+      requestDto = new CreateReviewRequestDto(requestDto.getContent(), requestDto.getGrade(), file);
     }
     ReviewResponseDto response = reviewService.addReview(requestDto);
     return ResponseEntity.ok(response);
@@ -50,9 +45,14 @@ public class ReviewController {
   }
 
   // 리뷰 수정
-  @PutMapping
-  public ReviewResponseDto updateReview(@RequestBody ReviewRequestDto requestDto) {
-    return reviewService.modifyReview(requestDto);
+  @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ReviewResponseDto> updateReview(@RequestPart("review") UpdateReviewRequestDto requestDto,
+      @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+    if (file != null) {
+      requestDto = new UpdateReviewRequestDto(requestDto.getId(), requestDto.getContent(), requestDto.getGrade(), file);
+    }
+    ReviewResponseDto response = reviewService.modifyReview(requestDto);
+    return ResponseEntity.ok(response);
   }
 
   // 리뷰 삭제

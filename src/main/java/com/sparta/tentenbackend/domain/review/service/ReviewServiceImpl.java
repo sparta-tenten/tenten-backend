@@ -1,13 +1,11 @@
 package com.sparta.tentenbackend.domain.review.service;
 
-import com.sparta.tentenbackend.domain.order.entity.Order;
-import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
-import com.sparta.tentenbackend.domain.review.dto.ReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
-import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import com.sparta.tentenbackend.global.service.S3Service;
 import java.io.IOException;
@@ -39,7 +37,7 @@ public class ReviewServiceImpl implements ReviewService {
   // 리뷰 만들기
   @Override
   @Transactional
-  public ReviewResponseDto addReview(ReviewRequestDto requestDto) throws IOException {
+  public ReviewResponseDto addReview(CreateReviewRequestDto requestDto) throws IOException {
 //    UUID orderId = UUID.fromString(requestDto.getOrderId());
 //    // 주문내역 불러오기
 //    Order order = orderRepository.findById(orderId).orElseThrow(() -> {
@@ -76,11 +74,17 @@ public class ReviewServiceImpl implements ReviewService {
   // 리뷰 수정
   @Override
   @Transactional
-  public ReviewResponseDto modifyReview(ReviewRequestDto requestDto) {
+  public ReviewResponseDto modifyReview(UpdateReviewRequestDto requestDto) throws IOException {
     // user.getId() == requestDto.getUserId() 확인
-    Review review = reviewRepository.findById(requestDto.getId()).orElseThrow(() ->
+    Review review = reviewRepository.findById(UUID.fromString(requestDto.getId())).orElseThrow(() ->
         new NotFoundException("해당 리뷰는 존재하지 않습니다."));
-    review.updateById(requestDto);
+    // 파일이 존재하면 파일 대체
+    System.out.println(review.getImage());
+    String imageUrl = null;
+    if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
+      imageUrl = s3Service.updateFile(review.getImage(), requestDto.getFile());
+    }
+    review.updateById(requestDto, imageUrl);
     reviewRepository.save(review);
     return new ReviewResponseDto(review);
   }

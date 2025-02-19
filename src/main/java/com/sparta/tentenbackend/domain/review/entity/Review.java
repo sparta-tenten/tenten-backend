@@ -1,8 +1,8 @@
 package com.sparta.tentenbackend.domain.review.entity;
 
-import com.sparta.tentenbackend.domain.category.dto.CategoryRequestDto;
 import com.sparta.tentenbackend.domain.order.entity.Order;
-import com.sparta.tentenbackend.domain.review.dto.ReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -47,17 +46,17 @@ public class Review extends BaseEntity {
   @JoinColumn(name = "order_id")
   private Order order;
 
-  public Review(ReviewRequestDto requestDto, String imageUrl) { // ,Order order
+  public Review(CreateReviewRequestDto requestDto, String imageUrl) { // ,Order order
     this.content = requestDto.getContent();
     this.grade = requestDto.getGrade();
     this.image = imageUrl;
 //    this.order = order;
   }
 
-  public void updateById(ReviewRequestDto requestDto) {
+  public void updateById(UpdateReviewRequestDto requestDto, String imageUrl) {
     this.content = requestDto.getContent();
     this.grade = requestDto.getGrade();
-//    this.image = requestDto.getImage();
+    this.image = imageUrl;
   }
 
   public void markAsDeleted() {
