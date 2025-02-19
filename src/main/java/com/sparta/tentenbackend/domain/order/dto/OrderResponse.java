@@ -4,7 +4,9 @@ import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.entity.OrderType;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.Getter;
 
 @Getter
@@ -15,7 +17,7 @@ public class OrderResponse {
     private final DeliveryType deliveryType;
     private final OrderType orderType;
     private final OrderStatus orderStatus;
-    // TODO List<MenuResponse> 추가하기
+    private final List<OrderMenuResponse> orderMenuResponseList;
     // TODO PaymentResponse 추가하기
 
     public OrderResponse(Order order) {
@@ -24,5 +26,7 @@ public class OrderResponse {
         this.deliveryType = order.getDeliveryType();
         this.orderType = order.getOrderType();
         this.orderStatus = order.getOrderStatus();
+        this.orderMenuResponseList = order.getMenuOrderList().stream().map(OrderMenuResponse::new)
+            .collect(Collectors.toList());
     }
 }
