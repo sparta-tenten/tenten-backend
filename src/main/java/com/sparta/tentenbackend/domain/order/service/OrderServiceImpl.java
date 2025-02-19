@@ -33,12 +33,14 @@ public class OrderServiceImpl implements OrderService {
     private final MenuRepository menuRepository;
     private final MenuOptionRepository menuOptionRepository;
 
+    // TODO User 아이디 기준으로 찾기로 수정
     @Override
     @Transactional(readOnly = true)
     public Page<Order> getOrderList(Pageable pageable) {
         return orderRepository.findAll(pageable);
     }
 
+    // TODO User 추가
     @Override
     @Transactional
     public Order createOrder(OrderRequest req) {
@@ -84,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void cancelOrder(UUID orderId) {
+    public void ownerCancelOrder(UUID orderId) {
         Order order = getOrderById(orderId);
         // TODO 유저 검증 로직 추가
         order.setOrderStatus(OrderStatus.CANCELLED);
@@ -96,5 +98,10 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findById(orderId).orElseThrow(
             () -> new NotFoundException("존재하지 않는 주문입니다.")
         );
+    }
+
+    @Override
+    public Page<Order> getOrderListByStoreId(UUID storeId, Pageable pageable) {
+        return orderRepository.findAllByStoreId(storeId, pageable);
     }
 }

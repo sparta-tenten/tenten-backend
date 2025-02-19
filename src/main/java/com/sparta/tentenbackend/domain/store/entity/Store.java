@@ -1,16 +1,20 @@
 package com.sparta.tentenbackend.domain.store.entity;
 
 import com.sparta.tentenbackend.domain.category.entity.Category;
+import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,4 +50,7 @@ public class Store extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "town_code", nullable = false)
     private Town town; // 가게 지역 (p_town과 연결)
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Order> orderList;
 }

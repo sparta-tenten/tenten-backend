@@ -3,6 +3,7 @@ package com.sparta.tentenbackend.domain.order.entity;
 import com.sparta.tentenbackend.domain.menu.entity.MenuOrder;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
+import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -62,6 +64,10 @@ public class Order extends BaseEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuOrder> menuOrderList;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     public Order(Long totalPrice, DeliveryType deliveryType, OrderType orderType,
         OrderStatus orderStatus) {

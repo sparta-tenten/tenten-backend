@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,6 @@ public class OrderRequest {
     private String phoneNumber;
     @NotBlank
     private String request;
+    @NotBlank
+    private UUID storeId;
 }
