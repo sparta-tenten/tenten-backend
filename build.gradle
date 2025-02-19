@@ -49,6 +49,10 @@ dependencies {
 
 
     implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
+    // AWS SDK S3
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation 'software.amazon.awssdk:s3'
 }
 
 tasks.named('test') {

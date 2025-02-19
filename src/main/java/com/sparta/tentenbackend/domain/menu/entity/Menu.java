@@ -1,5 +1,6 @@
 
 package com.sparta.tentenbackend.domain.menu.entity;
+import com.sparta.tentenbackend.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigInteger;
@@ -24,8 +25,8 @@ public class Menu {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    private MenuStatus status; // ENUM (판매중, 하루품절, 숨김)
+//    @Enumerated(EnumType.STRING)
+//    private MenuStatus status; // ENUM (판매중, 하루품절, 숨김)
 
     private String image;
 
