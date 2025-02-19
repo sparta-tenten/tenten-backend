@@ -1,7 +1,6 @@
 package com.sparta.tentenbackend.domain.delivery_address.service;
 
 import com.sparta.tentenbackend.domain.delivery_address.dto.CreateDeliveryAddressRequest;
-import com.sparta.tentenbackend.domain.delivery_address.dto.DeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.delivery_address.repository.DeliveryAddressRepository;

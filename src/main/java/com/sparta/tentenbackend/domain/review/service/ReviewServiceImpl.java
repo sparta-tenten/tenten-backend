@@ -1,11 +1,16 @@
 package com.sparta.tentenbackend.domain.review.service;
 
+import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.review.dto.ReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
+import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
+import com.sparta.tentenbackend.global.service.S3Service;
+import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewServiceImpl implements ReviewService {
   private final ReviewRepository reviewRepository;
   private final OrderRepository orderRepository;
+  private final S3Service s3Service;
+
   // TODO 리뷰 생성, 수정, 삭제 user 넣기
+  // TODO 주문 API 완성되면 주석 없얘고 테스트해보기
   // 로그인한 유저가 주문한 유저인지 확인
 //  private void confirmYouAreOrderUser(User user, Order order) {
 //    if (!user.getId().equals(order.getUser().getId())) {
@@ -31,7 +39,7 @@ public class ReviewServiceImpl implements ReviewService {
   // 리뷰 만들기
   @Override
   @Transactional
-  public ReviewResponseDto addReview(ReviewRequestDto requestDto) {
+  public ReviewResponseDto addReview(ReviewRequestDto requestDto) throws IOException {
 //    UUID orderId = UUID.fromString(requestDto.getOrderId());
 //    // 주문내역 불러오기
 //    Order order = orderRepository.findById(orderId).orElseThrow(() -> {
@@ -43,8 +51,13 @@ public class ReviewServiceImpl implements ReviewService {
 //    if (order.getOrderStatus() != OrderStatus.DELIVERY_COMPLETED) {
 //      throw new BadRequestException("리뷰는 배달완료된 주문에 대해서만 작성할 수 있습니다.");
 //    }
-//    Review review = reviewRepository.save(new Review(requestDto, order));
-    Review review = reviewRepository.save(new Review(requestDto));
+    // 파일이 존재하면 S3에 파일 업로드
+    String imageUrl = null;
+    if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
+      imageUrl = s3Service.uploadFile(requestDto.getFile());
+    }
+//    Review review = reviewRepository.save(new Review(requestDto, imageUrl, order));
+    Review review = reviewRepository.save(new Review(requestDto, imageUrl));
     return new ReviewResponseDto(review);
   }
 

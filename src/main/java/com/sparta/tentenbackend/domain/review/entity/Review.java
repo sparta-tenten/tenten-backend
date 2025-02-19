@@ -47,17 +47,17 @@ public class Review extends BaseEntity {
   @JoinColumn(name = "order_id")
   private Order order;
 
-  public Review(ReviewRequestDto requestDto) {   // ,Order order
+  public Review(ReviewRequestDto requestDto, String imageUrl) { // ,Order order
     this.content = requestDto.getContent();
     this.grade = requestDto.getGrade();
-    this.image = requestDto.getImage();
+    this.image = imageUrl;
 //    this.order = order;
   }
 
   public void updateById(ReviewRequestDto requestDto) {
     this.content = requestDto.getContent();
     this.grade = requestDto.getGrade();
-    this.image = requestDto.getImage();
+//    this.image = requestDto.getImage();
   }
 
   public void markAsDeleted() {
