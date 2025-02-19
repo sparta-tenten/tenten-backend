@@ -1,6 +1,6 @@
 package com.sparta.tentenbackend.domain.payment.entity;
 
-import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.delivery_address.order.entity.Order;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

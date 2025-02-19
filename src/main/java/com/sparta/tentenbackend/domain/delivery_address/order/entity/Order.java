@@ -1,4 +1,4 @@
-package com.sparta.tentenbackend.domain.order.entity;
+package com.sparta.tentenbackend.domain.delivery_address.order.entity;
 
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.global.BaseEntity;

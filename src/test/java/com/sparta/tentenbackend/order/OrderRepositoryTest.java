@@ -3,11 +3,11 @@ package com.sparta.tentenbackend.order;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
-import com.sparta.tentenbackend.domain.order.entity.Order;
-import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
-import com.sparta.tentenbackend.domain.order.entity.OrderType;
-import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
+import com.sparta.tentenbackend.domain.delivery_address.order.entity.DeliveryType;
+import com.sparta.tentenbackend.domain.delivery_address.order.entity.Order;
+import com.sparta.tentenbackend.domain.delivery_address.order.entity.OrderStatus;
+import com.sparta.tentenbackend.domain.delivery_address.order.entity.OrderType;
+import com.sparta.tentenbackend.domain.delivery_address.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.domain.payment.entity.PaymentStatus;
 import org.junit.jupiter.api.DisplayName;

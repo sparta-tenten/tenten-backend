@@ -1,6 +1,6 @@
-package com.sparta.tentenbackend.domain.order.controller;
+package com.sparta.tentenbackend.domain.delivery_address.order.controller;
 
-import com.sparta.tentenbackend.domain.order.service.OrderService;
+import com.sparta.tentenbackend.domain.delivery_address.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
