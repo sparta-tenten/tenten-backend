@@ -6,7 +6,6 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.BaseEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.Getter;
@@ -39,8 +37,8 @@ public class DeliveryAddress extends BaseEntity {
 
     private String detailAddress;
 
-    @OneToOne(mappedBy = "deliveryAddress", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Order order;
+//    @OneToOne(mappedBy = "deliveryAddress", cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -52,6 +50,13 @@ public class DeliveryAddress extends BaseEntity {
 
     // TODO 유저 추가
     public DeliveryAddress(CreateDeliveryAddressRequest req, Town town) {
+        this.name = req.getName();
+        this.address = req.getAddress();
+        this.detailAddress = req.getDetailAddress();
+        this.town = town;
+    }
+
+    public void update(UpdateDeliveryAddressRequest req, Town town) {
         this.name = req.getName();
         this.address = req.getAddress();
         this.detailAddress = req.getDetailAddress();

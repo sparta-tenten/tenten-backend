@@ -62,5 +62,4 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
         deliveryAddress.setDeleted(true);
     }
-
 }
