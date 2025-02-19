@@ -9,10 +9,12 @@ import com.sparta.tentenbackend.domain.menu.repository.MenuRepository;
 import com.sparta.tentenbackend.domain.order.dto.OrderMenuRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
 import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
+import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -109,7 +111,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Order> getOrderListByStoreId(UUID storeId, Pageable pageable) {
         return orderRepository.findAllByStoreId(storeId, pageable);
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderStatus(UUID orderId) {
+        Order order = getOrderById(orderId);
+        OrderStatus status = order.getOrderStatus();
+
+        switch (status) {
+            case WAITING_ORDER_RECEIVE:
+                order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+                break;
+            case ORDER_RECEIVED:
+                order.setOrderStatus(OrderStatus.COOKING);
+                break;
+            case COOKING:
+                order.setOrderStatus(OrderStatus.COOKING_COMPLETED);
+                break;
+            case COOKING_COMPLETED:
+                order.setOrderStatus(OrderStatus.DELIVERING);
+                break;
+            case DELIVERING:
+                order.setOrderStatus(OrderStatus.DELIVERY_COMPLETED);
+                break;
+            default:
+                throw new BadRequestException("주문 상태를 업데이트 할 수 없습니다.");
+
+        }
     }
 }

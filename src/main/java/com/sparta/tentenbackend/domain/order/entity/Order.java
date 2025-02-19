@@ -28,12 +28,14 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "p_order")
 @NoArgsConstructor
+@DynamicUpdate
 public class Order extends BaseEntity {
 
     @Id

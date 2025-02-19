@@ -49,6 +49,6 @@ public class OrderController {
     @Operation(summary = "주문 취소하기")
     public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId) {
         orderService.cancelOrder(orderId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

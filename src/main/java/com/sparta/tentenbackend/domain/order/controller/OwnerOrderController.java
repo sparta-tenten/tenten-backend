@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,14 @@ public class OwnerOrderController {
         Pageable pageable) {
         Page<Order> orderList = orderService.getOrderListByStoreId(storeId, pageable);
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
+    }
+
+    @PatchMapping("/{orderId}")
+    @Operation(summary = "주문 상태 변경")
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId) {
+        orderService.updateOrderStatus(orderId);
+
+        return ResponseEntity.noContent().build();
     }
 
 //    @PostMapping("/cancel/{orderId}")
