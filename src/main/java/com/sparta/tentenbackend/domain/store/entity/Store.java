@@ -5,6 +5,7 @@ import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.BaseEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,9 +33,15 @@ public class Store extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;  // 가게 ID (UUID)
 
+  @Column(nullable = false)
   private String name;  // 가게명
+
+  @Column(nullable = false)
   private String address;  // 가게 주소
+
+  @Column(nullable = false)
   private String phoneNumber;  // 전화번호
+
   private String image;  // 가게 이미지 URL
 
   @ManyToOne
