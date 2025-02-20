@@ -31,6 +31,7 @@ public class ReviewServiceImpl implements ReviewService {
   private final S3Service s3Service;
 
   // TODO 주문 API 완성되면 주석 없얘고 테스트해보기
+  // TODO 평점별 sorted 리뷰 목록 조회 만들기
 
   // 리뷰 만들기
   @Override
