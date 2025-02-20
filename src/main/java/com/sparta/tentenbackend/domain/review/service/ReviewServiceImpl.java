@@ -40,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
     UUID orderId = UUID.fromString(requestDto.getOrderId());
     // 주문내역 불러오기
     Order order = orderRepository.findById(orderId).orElseThrow(() -> {
-      throw new NotFoundException("해당 주문을 찾을 수 없습니다.");
+      throw new NotFoundException("해당 주문내역을 찾을 수 없습니다.");
     });
 //    // 로그인한 유저가 주문한 유저인지 확인
 //    if (!user.getId().equals(order.getUser().getId())) {
