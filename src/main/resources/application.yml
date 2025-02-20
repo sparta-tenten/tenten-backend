@@ -35,8 +35,15 @@ aws:
     bucket:
       name: ${BUCKET_NAME}
 
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+  model:
+    name: ${GEMINI_MODEL_NAME}
+
 admin:
   token:
     owner: ${OWNER_SECRET_CODE}
     manager: ${MANAGER_SECRET_CODE}
     master: ${MASTER_SECRET_CODE}
+

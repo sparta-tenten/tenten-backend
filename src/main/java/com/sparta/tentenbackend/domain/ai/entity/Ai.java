@@ -28,4 +28,9 @@ public class Ai extends BaseEntity {
 
   @Column(nullable = false)
   private String answer;
+
+  public Ai(String question, String answer) {
+    this.question = question;
+    this.answer = answer;
+  }
 }
