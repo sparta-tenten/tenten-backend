@@ -28,3 +28,9 @@ aws:
   s3:
     bucket:
       name: ${BUCKET_NAME}
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+  model:
+    name: ${GEMINI_MODEL_NAME}
