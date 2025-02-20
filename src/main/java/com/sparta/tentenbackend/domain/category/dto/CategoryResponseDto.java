@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CategoryResponseDto {
   // 카테고리 ID
-  private UUID id;
+  private String id;
   // 카테고리 이름
   private String name;
 
   public CategoryResponseDto(Category category) {
+    this.id = category.getId().toString();
     this.name = category.getName();
   }
 }

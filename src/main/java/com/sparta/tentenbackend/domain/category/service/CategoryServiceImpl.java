@@ -21,7 +21,8 @@ public class CategoryServiceImpl implements CategoryService {
     return new CategoryResponseDto(category);
   }
 
-  // 카테고리 목록 전체 조회
+  // TODO 페이징
+  // 카테고리 목록 조회
   @Override
   public List<CategoryResponseDto> findAllCategories() {
     List<Category> categoryList = categoryRepository.findAllByIsDeletedFalse();

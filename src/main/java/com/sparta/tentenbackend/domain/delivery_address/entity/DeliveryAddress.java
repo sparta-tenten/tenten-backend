@@ -2,6 +2,7 @@ package com.sparta.tentenbackend.domain.delivery_address.entity;
 
 import com.sparta.tentenbackend.domain.delivery_address.dto.CreateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddressRequest;
+import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.BaseEntity;
@@ -61,4 +62,5 @@ public class DeliveryAddress extends BaseEntity {
         this.detailAddress = req.getDetailAddress();
         this.town = town;
     }
+
 }

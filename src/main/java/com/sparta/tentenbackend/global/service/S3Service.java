@@ -40,7 +40,8 @@ public class S3Service {
   }
 
   // 파일 수정 (대체 업로드)
-  public String updateFile(String fileName, MultipartFile file) throws IOException {
+  public String updateFile(String fileUrl, MultipartFile file) throws IOException {
+    String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
     if (!fileExists(fileName)) {
       throw new IllegalArgumentException("File does not exist: " + fileName);
     }
@@ -58,7 +59,8 @@ public class S3Service {
   }
 
   // 파일 삭제
-  public void deleteFile(String fileName) {
+  public void deleteFile(String fileUrl) {
+    String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
     if (!fileExists(fileName)) {
       throw new IllegalArgumentException("File does not exist: " + fileName);
     }
@@ -80,7 +82,7 @@ public class S3Service {
           .build());
       return true;
     } catch (S3Exception e) {
-      System.out.println("파일 존재 확인 실패: " + e.awsErrorDetails().errorMessage());
+      System.out.println("S3 스토리지에 해당 파일이 존재하지 않습니다. : " + e.awsErrorDetails().errorMessage());
       return false;
     }
   }

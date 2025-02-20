@@ -1,3 +1,4 @@
+
 package com.sparta.tentenbackend.domain.menu.entity;
 
 import com.sparta.tentenbackend.domain.order.entity.Order;
@@ -41,3 +42,4 @@ public class MenuOrder {
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date deletedAt;
 }
+
