@@ -4,13 +4,12 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
-import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
+import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.exception.BadRequestException;
-import com.sparta.tentenbackend.global.exception.ForbiddenException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import com.sparta.tentenbackend.global.service.S3Service;
 import java.io.IOException;
@@ -28,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewServiceImpl implements ReviewService {
   private final ReviewRepository reviewRepository;
   private final OrderRepository orderRepository;
+//  private final StoreRepository storeRepository;
   private final S3Service s3Service;
 
   // TODO 주문 API 완성되면 주석 없얘고 테스트해보기
@@ -56,6 +56,10 @@ public class ReviewServiceImpl implements ReviewService {
       imageUrl = s3Service.uploadFile(requestDto.getFile());
     }
     Review review = reviewRepository.save(new Review(requestDto, imageUrl, order));
+    // 리뷰 생성시 가게 총 평점 합계, 총 리뷰 개수 저장
+//    Store store = order.getStore();
+//    store.updateReviewStats(requestDto.getGrade());
+//    storeRepository.save(store);
     return new ReviewResponseDto(review);
   }
 
@@ -82,13 +86,19 @@ public class ReviewServiceImpl implements ReviewService {
 //    if (review.getOrder().getUser().getId() != user.getId()) {
 //      throw new ForbiddenException("해당 리뷰의 작성자가 아닙니다.");
 //    }
+//    Store store = review.getOrder().getStore();
+    int oldGrade = review.getGrade(); // 기존 평점
     // 파일이 존재하면 파일 대체
     String imageUrl = null;
     if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
       imageUrl = s3Service.updateFile(review.getImage(), requestDto.getFile());
     }
+    // 리뷰 내용 업데이트
     review.updateById(requestDto, imageUrl);
+    // 가게 총 평점 합계 업데이트
+//    store.modifyReviewStats(oldGrade, requestDto.getGrade());
     reviewRepository.save(review);
+//    storeRepository.save(store);
     return new ReviewResponseDto(review);
   }
 
@@ -102,9 +112,12 @@ public class ReviewServiceImpl implements ReviewService {
 //    }
     Review review = reviewRepository.findById(UUID.fromString(reviewId)).orElseThrow(() ->
         new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+//    Store store = review.getOrder().getStore();
     s3Service.deleteFile(review.getImage());
     review.markAsDeleted();
+//    store.removeReviewStats(review.getGrade());
     reviewRepository.save(review);
+//    storeRepository.save(store);
   }
 }
 

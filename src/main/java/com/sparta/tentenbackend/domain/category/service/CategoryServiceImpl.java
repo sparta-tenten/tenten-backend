@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
 
   // 카테고리 추가
   @Override
+  @Transactional
   public CategoryResponseDto addCategory(CategoryRequestDto requestDto, User user) {
     if (user.getRole() == UserRoleEnum.MASTER) {
       Category category = categoryRepository.save(new Category(requestDto));
@@ -41,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
 
   // 카테고리 수정
   @Override
+  @Transactional
   public CategoryResponseDto modifyCategory(CategoryRequestDto requestDto, User user) {
     Category category = categoryRepository.findById(requestDto.getId()).orElseThrow(() ->
         new NullPointerException("해당 카테고리는 존재하지 않습니다."));
@@ -55,6 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
 
   // 카테고리 삭제
   @Override
+  @Transactional
   public void removeCategory(CategoryRequestDto requestDto, User user) {
     Category category = categoryRepository.findById(requestDto.getId()).orElseThrow(() ->
         new NullPointerException("해당 카테고리는 존재하지 않습니다."));
