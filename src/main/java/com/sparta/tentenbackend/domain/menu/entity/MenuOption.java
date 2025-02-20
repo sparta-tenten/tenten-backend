@@ -21,8 +21,8 @@ public class MenuOption {
 
     private BigInteger price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
     private String createdBy;
