@@ -30,7 +30,7 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
     Review review = reviewRepository.findById(reviewId)
         .orElseThrow(() -> new NotFoundException("해당 리뷰를 찾을 수 없습니다."));
     // 유저가 OWNER고, 유저아이디가 가게 사장님 아이디와 일치할 때
-//    if (user.getRole() == UserRoleEnum.OWNER && user.getId().equals(review.getOrder().getStore().getId())) {
+//    if (user.getRole() == UserRoleEnum.OWNER && user.getId().equals(review.getOrder().getStore().getUser().getId())) {
     OwnerReview ownerReview = ownerReviewRepository.save(new OwnerReview(requestDto, review));
     return new OwnerReviewResponseDto(ownerReview);
 //    } else {
@@ -44,7 +44,7 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
     OwnerReview ownerReview = ownerReviewRepository.findById(requestDto.getId())
         .orElseThrow(() -> new NotFoundException("해당 답글을 찾을 수 없습니다."));
     // 유저아이디가 가게 사장님 아이디와 일치할 때
-//    if (user.getRole() == UserRoleEnum.OWNER && user.getId().equals(review.getOrder().getStore().getId())) {
+//    if (user.getRole() == UserRoleEnum.OWNER && user.getId().equals(review.getOrder().getStore().getUser().getId())) {
     ownerReview.updateById(requestDto);
     ownerReviewRepository.save(ownerReview);
     return new OwnerReviewResponseDto(ownerReview);
@@ -59,7 +59,7 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
     OwnerReview ownerReview = ownerReviewRepository.findById(UUID.fromString(ownerReviewId))
         .orElseThrow(() -> new NotFoundException("해당 답글을 찾을 수 없습니다."));
     // 유저아이디가 가게 사장님 아이디와 일치할 때
-//    if (user.getRole() == UserRoleEnum.OWNER && user.getId().equals(review.getOrder().getStore().getId())) {
+//    if (user.getRole() == UserRoleEnum.OWNER && user.getId().equals(review.getOrder().getStore().getUser().getId())) {
     ownerReview.markAsDeleted();
     ownerReviewRepository.save(ownerReview);
 //    } else {
