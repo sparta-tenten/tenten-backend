@@ -10,7 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, UUID> , ReviewRepositoryCustom {
 
-//  Page<Review> findAllByIsDeletedFalse(Pageable pageable);
-
   Page<Review> findAllByOrder_User_IdAndIsDeletedFalse(Long id, Pageable pageable);
 }

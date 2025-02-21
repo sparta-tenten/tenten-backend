@@ -7,13 +7,11 @@ import com.sparta.tentenbackend.domain.review.service.ReviewService;
 import com.sparta.tentenbackend.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +47,7 @@ public class ReviewController {
   }
 
   // 리뷰 검색
-  @GetMapping
+  @GetMapping("/search")
   public ResponseEntity<Page<ReviewResponseDto>> searchReviewsByKeyword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("searchType") int searchType, @RequestParam("keyword") String keyword, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
     Page<ReviewResponseDto> reviews = reviewService.searchReviewsByKeyword(userDetails.getUser(), searchType, keyword, page - 1, size, sortBy, isAsc);
     return ResponseEntity.ok(reviews);
