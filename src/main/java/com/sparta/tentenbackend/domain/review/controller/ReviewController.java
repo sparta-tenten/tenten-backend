@@ -48,6 +48,13 @@ public class ReviewController {
     return ResponseEntity.ok(reviews);
   }
 
+  // 리뷰 검색
+  @GetMapping
+  public ResponseEntity<Page<ReviewResponseDto>> searchReviewsByKeyword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("searchType") int searchType, @RequestParam("keyword") String keyword, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+    Page<ReviewResponseDto> reviews = reviewService.searchReviewsByKeyword(userDetails.getUser(), searchType, keyword, page - 1, size, sortBy, isAsc);
+    return ResponseEntity.ok(reviews);
+  }
+
   // 리뷰 수정
   @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<ReviewResponseDto> updateReview(@Valid @RequestPart("review") UpdateReviewRequestDto requestDto,

@@ -13,6 +13,8 @@ import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import com.sparta.tentenbackend.global.service.S3Service;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -74,6 +76,33 @@ public class ReviewServiceImpl implements ReviewService {
     Page<Review> reviews = reviewRepository.findAllByOrder_User_IdAndIsDeletedFalse(user.getId(), pageable);
 //    Page<Review> reviews = reviewRepository.findAllByIsDeletedFalse(pageable);
     return reviews.map(ReviewResponseDto::new);
+  }
+
+  @Override
+  public Page<ReviewResponseDto> searchReviewsByKeyword(User user, int searchType, String keyword, int page, int size, String sortBy, boolean isAsc) {
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    Pageable pageable = PageRequest.of(page, getValidPageSize(size), sort);
+
+    Page<Review> reviews;
+    if (searchType == 1) { // 가게명 검색
+      reviews = reviewRepository.findReviewsByStoreName(user.getId(), keyword, pageable);
+    } else if (searchType == 2) { // 메뉴명 검색
+      reviews = reviewRepository.findReviewsByMenuName(user.getId(), keyword, pageable);
+    } else {
+      throw new IllegalArgumentException("searchType은 1(가게명) 또는 2(메뉴명)이어야 합니다.");
+    }
+    return reviews.map(ReviewResponseDto::new);
+  }
+
+  private int getValidPageSize(int size) {
+    // 허용되는 페이지 크기 목록
+    List<Integer> allowedSizes = Arrays.asList(10, 30, 50);
+    // 페이지 크기가 허용된 값에 없으면 기본 10으로 설정
+    if (!allowedSizes.contains(size)) {
+      return 10;
+    }
+    return size;
   }
 
   // 리뷰 수정

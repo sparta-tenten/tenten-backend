@@ -1,0 +1,68 @@
+package com.sparta.tentenbackend.domain.menu.entity;
+
+import static com.querydsl.core.types.PathMetadataFactory.*;
+
+import com.querydsl.core.types.dsl.*;
+
+import com.querydsl.core.types.PathMetadata;
+import javax.annotation.processing.Generated;
+import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
+
+
+/**
+ * QMenuOrder is a Querydsl query type for MenuOrder
+ */
+@Generated("com.querydsl.codegen.DefaultEntitySerializer")
+public class QMenuOrder extends EntityPathBase<MenuOrder> {
+
+    private static final long serialVersionUID = -1818294743L;
+
+    private static final PathInits INITS = PathInits.DIRECT2;
+
+    public static final QMenuOrder menuOrder = new QMenuOrder("menuOrder");
+
+    public final DateTimePath<java.util.Date> createdAt = createDateTime("createdAt", java.util.Date.class);
+
+    public final StringPath createdBy = createString("createdBy");
+
+    public final DateTimePath<java.util.Date> deletedAt = createDateTime("deletedAt", java.util.Date.class);
+
+    public final StringPath deletedBy = createString("deletedBy");
+
+    public final ComparablePath<java.util.UUID> id = createComparable("id", java.util.UUID.class);
+
+    public final QMenu menu;
+
+    public final com.sparta.tentenbackend.domain.order.entity.QOrder order;
+
+    public final NumberPath<java.math.BigInteger> quantity = createNumber("quantity", java.math.BigInteger.class);
+
+    public final DateTimePath<java.util.Date> updatedAt = createDateTime("updatedAt", java.util.Date.class);
+
+    public final StringPath updatedBy = createString("updatedBy");
+
+    public QMenuOrder(String variable) {
+        this(MenuOrder.class, forVariable(variable), INITS);
+    }
+
+    public QMenuOrder(Path<? extends MenuOrder> path) {
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+    }
+
+    public QMenuOrder(PathMetadata metadata) {
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QMenuOrder(PathMetadata metadata, PathInits inits) {
+        this(MenuOrder.class, metadata, inits);
+    }
+
+    public QMenuOrder(Class<? extends MenuOrder> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.menu = inits.isInitialized("menu") ? new QMenu(forProperty("menu"), inits.get("menu")) : null;
+        this.order = inits.isInitialized("order") ? new com.sparta.tentenbackend.domain.order.entity.QOrder(forProperty("order"), inits.get("order")) : null;
+    }
+
+}
+
