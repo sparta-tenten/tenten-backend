@@ -4,6 +4,7 @@ package com.sparta.tentenbackend.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.region.entity.Town;
+import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +17,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.awt.print.Book;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,16 +28,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Table(name = "p_user")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
-    private String userName;            // 요구사항 : 최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)
+    private String userName;            // TODO: 최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)
     @Column(nullable = false)
     @JsonIgnore
-    private String password;            // 요구사항 :  최소 8자 이상, 15자 이하이며 알파벳 대소문자(a~z, A~Z), 숫자(0~9), 특수문자
+    private String password;            // TODO:  최소 8자 이상, 15자 이하이며 알파벳 대소문자(a~z, A~Z), 숫자(0~9), 특수문자
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -55,36 +58,45 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<DeliveryAddress> deliveryAddressList;
 
-    /*
-     * @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-     * @JoinColumn(name = "region_id")
-     * private Region region;
-     */
+    public User(String userName, String password, String email, UserRoleEnum role, String address,
+        String detailAddress, String phoneNumber) {
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.phoneNumber = phoneNumber;
+    }
+
 
     /*
-     * @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+     * @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,orphanRemoval = true)
      * @JoinColumn(name = "store_id")
      * private Store store;
      */
 
     /*
-     * @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-     *  @JoinColumn(name = "payment_id")
-     *  private Payment payment;
-     */
-
-
-
-    /*
-     * @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-     * private List<Order> order = new ArrayList<>();
+     * @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE,orphanRemoval = true)
+     * private List<Order> orders;
      */
 
     /*
-     * @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+     * @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
      * private List<DeliveryAddress> deliveryAddress = new ArrayList<>();
      */
 
+
+    /*
+     * @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+     * private List<Review> reviews;
+     */
+
+
+    /*
+     * @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+     * private List<OwnerReview> ownerReview = new ArrayList<>();
+     */
 
 }
 
