@@ -52,7 +52,7 @@ public class OwnerOrderController {
 
 //    @PostMapping("/cancel/{orderId}")
 //    @Operation(summary = "사장님 주문 취소하기")
-//    public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId) {
+//    public ResponseEntity<Void> cancelOrder(@PathVariable ValidUUID orderId) {
 //        orderService.cancelOrder(orderId);
 //        return ResponseEntity.ok().build();
 //    }

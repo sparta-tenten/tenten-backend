@@ -2,6 +2,7 @@ package com.sparta.tentenbackend.domain.order.entity;
 
 import com.sparta.tentenbackend.domain.menu.entity.MenuOrder;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
+import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderRequest;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.user.entity.User;
@@ -44,7 +45,7 @@ public class Order extends BaseEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private Long totalPrice;
+    private Long totalPrice = 0L;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -58,8 +59,7 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToOne
-    @JoinColumn(name = "payment_id")
+    @OneToOne(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Payment payment;
 
     private String deliveryAddress;
@@ -90,7 +90,8 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
-    public Order(OrderRequest req, UserRoleEnum userRole) {
+    public Order(OrderRequest req, UserRoleEnum userRole, Store store) {
+        this.store = store;
         this.deliveryType = req.getDeliveryType();
         this.request = req.getRequest();
         this.orderType = req.getOrderType();
@@ -106,6 +107,13 @@ public class Order extends BaseEntity {
             this.deliveryAddress = req.getDeliveryAddress();
             this.phoneNumber = req.getPhoneNumber();
         }
+    }
+
+    public Order(TemporaryOrderRequest req, Store store) {
+        this.deliveryType = req.getDeliveryType();
+        this.orderType = OrderType.OFFLINE;
+        this.store = store;
+        this.orderStatus = OrderStatus.WAITING_PAYMENT;
     }
 
     public void cancel(Long cancelUserId) {

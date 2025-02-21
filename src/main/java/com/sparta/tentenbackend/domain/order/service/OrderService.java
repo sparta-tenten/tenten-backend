@@ -2,6 +2,7 @@ package com.sparta.tentenbackend.domain.order.service;
 
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
+import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -19,4 +20,6 @@ public interface OrderService {
     Page<Order> getOrderListByStoreId(UUID storeId, OrderSearchRequest orderSearchRequest);
 
     void updateOrderStatus(UUID orderId);
+
+    Order createTemporaryOrder(TemporaryOrderRequest req);
 }

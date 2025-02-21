@@ -3,6 +3,8 @@ package com.sparta.tentenbackend.domain.order.controller;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderResponse;
 import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
+import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderRequest;
+import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderResponse;
 import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
@@ -45,6 +47,16 @@ public class OrderController {
 
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
     }
+
+    // TODO AuthenticationPrincipal 추가
+    @PostMapping("/temp")
+    @Operation(summary = "임시 주문 생성(결제 대기)")
+    public ResponseEntity<TemporaryOrderResponse> createTemporaryOrder(
+        @RequestBody @Valid TemporaryOrderRequest req) {
+        Order order = orderService.createTemporaryOrder(req);
+        return ResponseEntity.ok(new TemporaryOrderResponse(order));
+    }
+
 
     // TODO AuthenticationPrincipal 추가
     @PostMapping

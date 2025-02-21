@@ -9,6 +9,7 @@ import com.sparta.tentenbackend.domain.menu.repository.MenuRepository;
 import com.sparta.tentenbackend.domain.order.dto.OrderMenuRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
+import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
@@ -51,9 +52,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Order createOrder(OrderRequest req) {
         // TODO User의 Role 넘기기
-        Order order = new Order(req, UserRoleEnum.CUSTOMER);
         Store store = storeService.getStoreById(req.getStoreId());
-        order.setStore(store);
+        Order order = new Order(req, UserRoleEnum.CUSTOMER, store);
 
         List<UUID> menuIdList = req.getOrderMenuRequestList().stream().map(OrderMenuRequest::getId)
             .toList();
@@ -111,6 +111,7 @@ public class OrderServiceImpl implements OrderService {
         );
     }
 
+    // TODO 사장님 id 검증 로직 추가하기
     @Override
     @Transactional(readOnly = true)
     public Page<Order> getOrderListByStoreId(UUID storeId, OrderSearchRequest orderSearchRequest) {
@@ -143,5 +144,15 @@ public class OrderServiceImpl implements OrderService {
                 throw new BadRequestException("주문 상태를 업데이트 할 수 없습니다.");
 
         }
+    }
+
+    // TODO User 추가
+    @Override
+    @Transactional
+    public Order createTemporaryOrder(TemporaryOrderRequest req) {
+        Store store = storeService.getStoreById(req.getStoreId());
+        Order order = new Order(req, store);
+
+        return orderRepository.save(order);
     }
 }
