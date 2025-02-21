@@ -16,7 +16,7 @@ public class PaymentController {
 
 //    @PostMapping
 //    @Operation(summary = "결제하기")
-//    public ResponseEntity<Void> payment(@RequestBody Payment payment) {
+//    public ResponseEntity<Void> payment(@RequestBody PaymentRequest paymentRequest) {
 //
 //    }
 }

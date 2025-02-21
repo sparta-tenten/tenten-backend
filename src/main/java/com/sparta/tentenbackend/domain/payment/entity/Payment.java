@@ -34,7 +34,7 @@ public class Payment extends BaseEntity {
     private PaymentStatus paymentStatus;
 
     @OneToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", unique = true, nullable = false)
     private Order order;
 
     public Payment(PaymentStatus paymentStatus, Long amount) {

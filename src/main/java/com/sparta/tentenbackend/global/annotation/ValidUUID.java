@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidUUID {
 
-    String message() default "{invalid.uuid}";
+    String message() default "유효하지 않은 UUID 입니다!";
 
     Class<?>[] groups() default {};
 

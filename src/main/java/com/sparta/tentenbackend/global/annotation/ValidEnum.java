@@ -15,7 +15,7 @@ public @interface ValidEnum {
 
     Class<? extends Enum<?>> enumClass();
 
-    String message() default "잘못된 Enum 값입니다.";
+    String message() default "유효하지 않은 Enum 값입니다.";
 
     Class<?>[] groups() default {};
 
