@@ -18,12 +18,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "p_user")
 public class User {
 
@@ -85,7 +88,15 @@ public class User {
      * private List<DeliveryAddress> deliveryAddress = new ArrayList<>();
      */
 
-
+    public User(String userName,String password,String email,UserRoleEnum role, String address, String detailAddress, String phoneNumber){
+        this.userName = userName;
+        this.password = password;
+        this.email =email;
+        this.role = role;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.phoneNumber = phoneNumber;
+    }
 }
 
 
