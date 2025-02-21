@@ -8,9 +8,11 @@ import com.sparta.tentenbackend.domain.menu.repository.MenuOptionRepository;
 import com.sparta.tentenbackend.domain.menu.repository.MenuRepository;
 import com.sparta.tentenbackend.domain.order.dto.OrderMenuRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
+import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
+import com.sparta.tentenbackend.domain.order.repository.OrderRepositoryQuery;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
 import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
@@ -25,7 +27,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,15 +35,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderRepositoryQuery orderRepositoryQuery;
     private final MenuRepository menuRepository;
     private final MenuOptionRepository menuOptionRepository;
     private final StoreService storeService;
 
     // TODO User 아이디 기준으로 찾기로 수정
     @Override
-    @Transactional(readOnly = true)
-    public Page<Order> getOrderList(Pageable pageable) {
-        return orderRepository.findAll(pageable);
+    public Page<Order> getOrderList(OrderSearchRequest orderSearchRequest) {
+        return orderRepositoryQuery.getOrderList(orderSearchRequest);
     }
 
     // TODO User(주문한 사람) 추가
@@ -112,8 +113,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Order> getOrderListByStoreId(UUID storeId, Pageable pageable) {
-        return orderRepository.findAllByStoreId(storeId, pageable);
+    public Page<Order> getOrderListByStoreId(UUID storeId, OrderSearchRequest orderSearchRequest) {
+        return orderRepositoryQuery.getOrderListByStoreId(storeId, orderSearchRequest);
     }
 
     @Override

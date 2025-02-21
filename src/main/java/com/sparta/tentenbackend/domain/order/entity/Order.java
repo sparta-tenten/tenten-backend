@@ -4,6 +4,7 @@ import com.sparta.tentenbackend.domain.menu.entity.MenuOrder;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.domain.store.entity.Store;
+import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import com.sparta.tentenbackend.global.BaseEntity;
 import com.sparta.tentenbackend.global.exception.BadRequestException;
@@ -71,6 +72,11 @@ public class Order extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
+
+    // TODO nullable = false 추가하기
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime cancelledAt;
