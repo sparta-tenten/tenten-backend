@@ -4,7 +4,6 @@ package com.sparta.tentenbackend.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.region.entity.Town;
-import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,12 +20,15 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.awt.print.Book;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "p_user")
 public class User extends BaseEntity {
 
