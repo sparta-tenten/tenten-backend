@@ -13,16 +13,6 @@ public enum UserRoleEnum {
 
     private final String role;
 
-    UserRoleEnum(String role) {
-        this.role = role;
-    }
-    CUSTOMER("CUSTOMER"),
-    OWNER("OWNER"),
-    MANAGER("MANAGER"),
-    MASTER("MASTER");
-
-    private final String role;
-
     public String getAuthority() {
         return this.role;
     }

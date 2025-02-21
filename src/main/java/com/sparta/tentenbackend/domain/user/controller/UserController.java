@@ -40,19 +40,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-
-    @PostMapping("/auth/sign-up")
-    @Operation(summary = "유저 회원가입")
-    public ResponseEntity<?> signup(
-        @Valid @RequestBody  SignupRequestDto request) {
-         String response = String.valueOf(userService.signup(request));
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-
-    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final JwtBlacklistService jwtBlacklistService;
+
 
     @PostMapping("/auth/sign-up")
     @Operation(summary = "유저 회원가입")

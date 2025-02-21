@@ -80,41 +80,6 @@ public class UserService {
         return ResponseEntity.ok("회원가입에 성공했습니다. [" + role + "] 권한이 부여되었습니다.");
     }
 
-        // TODO: 법정동 코드 테이블 만들고 db에 넣기
-        // DB에서 해당 법정동 코드 찾기
-//        Town town = townRepository.findByName(townName)
-//            .orElseThrow(() -> new IllegalArgumentException("해당 법정동을 찾을 수 없습니다: " + townName));
-
-        // 권한 부여, 기본 권한: CUSTOMER
-        UserRoleEnum role = UserRoleEnum.CUSTOMER;
-
-        System.out.println("====="+requestDto.getRole());
-
-        // OWNER, MANAGER, MASTER 요청 시 Secret Code 확인
-        if (requestDto.getRole() != null
-            && requestDto.getRole() != UserRoleEnum.CUSTOMER) {
-            String expectedToken = env.getProperty(
-                "admin.token." + requestDto.getRole().name().toLowerCase());
-
-            if (!expectedToken.equals(requestDto.getAdminToken())) {
-                throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
-            }
-
-            role = requestDto.getRole();
-        }
-
-        System.out.println(role);
-
-        // 유저 등록
-        User user = new User(requestDto.getUserName(), password, requestDto.getEmail(), role,
-            requestDto.getAddress(), requestDto.getDetailAddress(), requestDto.getPhoneNumber());
-
-        userRepository.save(user);
-
-        return ResponseEntity.ok("회원가입에 성공했습니다. [" + role + "] 권한이 부여되었습니다.");
-    }
-
-}
 
     @Transactional
     public ResponseEntity<String> login(LoginRequestDto requestDto, HttpServletResponse res) {
@@ -139,4 +104,5 @@ public class UserService {
 
     }
 
-}
+    }
+

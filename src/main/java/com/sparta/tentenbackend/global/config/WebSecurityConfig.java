@@ -17,11 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-@EnableWebSecurity
-public class WebSecurityConfig {
-
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -36,7 +31,8 @@ public class WebSecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+    public AuthenticationManager authenticationManager(
+        AuthenticationConfiguration configuration)
         throws Exception {
         return configuration.getAuthenticationManager();
     }
@@ -51,7 +47,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil,userDetailsService, jwtBlacklistService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, jwtBlacklistService);
     }
 
     @Bean
@@ -67,37 +63,33 @@ public class WebSecurityConfig {
         // TODO: 접근권한 제한하기 ex) .requestMatchers("/owner").hasRole("OWNER")); .. 현재는 /api/**로 다 풀려있어서 수정해야함
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/","/api/**","/api/auth/**").permitAll());
-
-                authorizeHttpRequests
-                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                    .permitAll() // resources 접근 허용 설정
-                    .requestMatchers(
-                        "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api-docs/**",
-                        "/swagger-resources/**", "/webjars/**").permitAll()
-                    .requestMatchers("/api/auth/**", "/", "/api/user/**").permitAll()
-                    .anyRequest().authenticated()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .permitAll() // resources 접근 허용 설정
+                .requestMatchers(
+                    "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api-docs/**",
+                    "/swagger-resources/**", "/webjars/**").permitAll()
+                .requestMatchers("/api/auth/**", "/", "/api/user/**").permitAll()
+                .anyRequest().authenticated()
         );
-
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
+        http.addFilterBefore(jwtAuthenticationFilter(),
+            UsernamePasswordAuthenticationFilter.class);
 
         http.headers(headers -> headers
             .cacheControl(cache -> cache.disable()) // 캐싱 방지
             .frameOptions(frame -> frame.disable()) // 프레임 옵션 비활성화
             .addHeaderWriter((request, response) -> {
-                response.setHeader("Access-Control-Expose-Headers", "Authorization"); // ✅ Authorization 헤더 노출 허용
+                response.setHeader("Access-Control-Expose-Headers",
+                    "Authorization"); // ✅ Authorization 헤더 노출 허용
             })
         );
 
         http.sessionManagement((session) -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-
         return http.build();
+
     }
 }
+
