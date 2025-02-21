@@ -19,17 +19,14 @@ public class CreateReviewRequestDto { // 리뷰 만들기 request
   private int grade;
   // 리뷰 이미지
   private MultipartFile file;
+  // 주문 ID
+  private String orderId;
 
-  public CreateReviewRequestDto(String id, String content, int grade, MultipartFile file) {
+  public CreateReviewRequestDto(String content, int grade, String orderId, MultipartFile file) {
     this.content = content;
     this.grade = grade;
+    this.orderId = orderId;
     this.file = file;
   }
-
-//  // 회원 ID
-//  private int userId;
-
-//  // 주문 ID
-//  private String orderId;
-
 }
+

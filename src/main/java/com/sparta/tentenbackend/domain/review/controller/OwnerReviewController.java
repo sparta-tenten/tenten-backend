@@ -3,8 +3,10 @@ package com.sparta.tentenbackend.domain.review.controller;
 import com.sparta.tentenbackend.domain.review.dto.OwnerReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.OwnerReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.service.OwnerReviewService;
+import com.sparta.tentenbackend.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,13 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OwnerReviewController {
   private final OwnerReviewService ownerReviewService;
-  // TODO 사장님의 리뷰 생성, 수정, 삭제에 user 넣기
-  // @AuthenticationPrincipal UserDetailsImpl userDetails
 
   // 리뷰에 사장님 답글 달기
   @PostMapping
-  public ResponseEntity<OwnerReviewResponseDto> createOwnerReview(@RequestBody OwnerReviewRequestDto requestDto) {
-    OwnerReviewResponseDto response = ownerReviewService.addOwnerReview(requestDto);
+  public ResponseEntity<OwnerReviewResponseDto> createOwnerReview(@RequestBody OwnerReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    OwnerReviewResponseDto response = ownerReviewService.addOwnerReview(requestDto, userDetails.getUser());
     return ResponseEntity.ok(response);
   }
 

@@ -41,6 +41,11 @@ public class Store extends BaseEntity {
 
     private String image;  // 가게 이미지 URL
 
+    // ------------------------------------------------------------------- //
+    private int storeGrade; // 가게 총 평점 합계
+    private int totalReviewCount;   // 가게 총 리뷰 개수
+    // ------------------------------------------------------------------- //
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // 가게 소유자 (p_user 테이블과 연결)
@@ -62,4 +67,23 @@ public class Store extends BaseEntity {
         this.user = user;
         this.category = category;
     }
+
+    // ------------------------------------------------------------------- // 리뷰 생성, 수정, 삭제
+    // 리뷰 생성시 총 평점 합계, 총 리뷰 개수 업데이트
+    public void updateReviewStats(int grade) {
+        this.storeGrade += grade;
+        this.totalReviewCount += 1;
+    }
+
+    // 리뷰 수정시 총 평점 합계 업데이트
+    public void modifyReviewStats(int oldGrade, int newGrade) {
+        this.storeGrade = this.storeGrade - oldGrade + newGrade;
+    }
+
+    // 리뷰 삭제시 총 평점 합계, 총 리뷰 개수 업데이트
+    public void removeReviewStats(int grade) {
+        this.storeGrade -= grade;
+        this.totalReviewCount -= 1;
+    }
+    // ------------------------------------------------------------------- //
 }
