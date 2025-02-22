@@ -44,9 +44,8 @@ public class MenuOptionService {
     MenuOption menuOption = menuOptionRepository.findById(menuOptionId)
         .orElseThrow(() -> new IllegalArgumentException("메뉴 옵션을 찾을 수 없습니다. "));
 
-    menuOption.setDeleted(true);  // 숨김 처리
-    menuOption.setDeletedAt(new java.util.Date());  // 삭제 시간 설정
-    menuOption.setDeletedBy(deletedBy);  // 삭제한 사람 설정
+    // 개선된 markAsDeleted 메서드 사용
+    menuOption.markAsDeleted(deletedBy);
 
     menuOptionRepository.save(menuOption);  // 변경 사항 저장
   }

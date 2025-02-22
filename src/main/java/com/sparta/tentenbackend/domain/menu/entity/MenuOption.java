@@ -1,6 +1,7 @@
 
 package com.sparta.tentenbackend.domain.menu.entity;
 import jakarta.persistence.*;
+import java.util.Date;
 import lombok.*;
 import java.math.BigInteger;
 import java.util.UUID;
@@ -30,22 +31,41 @@ public class MenuOption {
     private String deletedBy;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date createdAt;
+    private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date updatedAt;
+    private Date updatedAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date deletedAt;
+    private Date deletedAt;
 
     // 데이터 숨김 처리를 위한 플래그
     @Builder.Default
-    private boolean isDeleted = false;
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 
-    // 필요한 setter 메서드들 추가 (Lombok @Setter가 없다면)
-    public void setDeleted(boolean deleted) {
-        this.isDeleted = deleted;
+    /**
+     * Soft Delete를 수행하는 메서드
+     */
+    public void markAsDeleted(String deletedBy) {
+        this.deleted = true;
+        this.deletedAt = new Date();
+        this.deletedBy = deletedBy;
     }
 
+    /**
+     * 업데이트 타임스탬프 메서드 (선택적)
+     */
+    public void markAsUpdated(String updatedBy) {
+        this.updatedAt = new Date();
+        this.updatedBy = updatedBy;
+    }
+
+    /**
+     * Menu를 설정하는 메서드 (MenuOptionService에서 사용)
+     */
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
 }
 

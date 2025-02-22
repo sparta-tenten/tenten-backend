@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.menu.controller;
 
+import com.sparta.tentenbackend.domain.menu.dto.MenuDto;
 import com.sparta.tentenbackend.domain.menu.entity.Menu;
 import com.sparta.tentenbackend.domain.menu.service.MenuService;
 import jakarta.validation.Valid;
@@ -20,12 +21,13 @@ public class MenuController {
   // 메뉴 생성
   @PostMapping("/{storeId}")
   public ResponseEntity<Menu> createMenu(@PathVariable UUID storeId, @RequestBody @Valid Menu menu) {
-    return ResponseEntity.ok(menuService.createMenu(storeId, menu));
+    Menu createdMenu = menuService.createMenu(storeId, menu);
+    return ResponseEntity.status(201).body(createdMenu);  // 201 Created
   }
 
   // 가게별 메뉴 목록 조회
   @GetMapping("/{storeId}")
-  public ResponseEntity<List<Menu>> getMenusByStore(@PathVariable UUID storeId) {
+  public ResponseEntity<List<MenuDto>> getMenusByStore(@PathVariable UUID storeId) {
     return ResponseEntity.ok(menuService.getMenusByStore(storeId));
   }
 

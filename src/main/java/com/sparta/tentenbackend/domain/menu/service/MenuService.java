@@ -1,12 +1,13 @@
 package com.sparta.tentenbackend.domain.menu.service;
 
+import com.sparta.tentenbackend.domain.menu.dto.MenuDto;
 import com.sparta.tentenbackend.domain.menu.entity.Menu;
 import com.sparta.tentenbackend.domain.menu.repository.MenuRepository;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.repository.StoreRepository;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,14 +41,16 @@ public class MenuService {
   }
 
   // 가게별 메뉴 목록 조회
-  public List<Menu> getMenusByStore(UUID storeId) {
-    return menuRepository.findAll()
+  @Transactional
+  public List<MenuDto> getMenusByStore(UUID storeId) {
+    return menuRepository.findByStoreIdAndDeletedFalse(storeId)
         .stream()
-        .filter(menu -> menu.getStore().getId().equals(storeId))
-        .toList();
+        .map(MenuDto::fromEntity)
+        .collect(Collectors.toList());
   }
 
   // 메뉴 상세 조회
+  @Transactional
   public Menu getMenuById(UUID menuId) {
     return menuRepository.findById(menuId)
         .orElseThrow(() -> new NotFoundException("메뉴를 찾을 수 없습니다."));
@@ -78,6 +81,7 @@ public class MenuService {
   @Transactional
   public void deleteMenu(UUID menuId) {
     Menu menu = getMenuById(menuId);
-    menuRepository.delete(menu);
+    menu.markAsDeleted("삭제한 유저");
+    menuRepository.save(menu);// 실제 삭제 대신 Soft Delete
   }
 }

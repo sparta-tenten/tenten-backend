@@ -56,5 +56,18 @@ public class Menu {
 
     private LocalDateTime deletedAt;
 
+    //Soft Delete 플래그 추가
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private boolean deleted = false;
+
+    /**
+     *  Soft Delete를 수행하는 메서드
+     */
+    public void markAsDeleted(String deletedBy) {
+        this.deleted = true;
+        this.deletedAt = LocalDateTime.now();
+        this.deletedBy = deletedBy;
+    }
 }
 
