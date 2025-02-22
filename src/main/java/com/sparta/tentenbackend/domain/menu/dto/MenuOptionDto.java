@@ -1,6 +1,7 @@
 package com.sparta.tentenbackend.domain.menu.dto;
 
 import com.sparta.tentenbackend.domain.menu.entity.MenuOption;
+
 import java.math.BigInteger;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,9 @@ import lombok.Setter;
 @Builder
 public class MenuOptionDto {
 
+
   private UUID id;
+
   private String category;
   private BigInteger price;
 
