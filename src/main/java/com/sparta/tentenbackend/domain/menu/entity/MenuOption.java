@@ -37,5 +37,9 @@ public class MenuOption {
 
     @Temporal(TemporalType.TIMESTAMP)
     private java.util.Date deletedAt;
+
+    // 데이터 숨김 처리를 위한 플래그
+    @Builder.Default
+    private boolean selected = false;
 }
 
