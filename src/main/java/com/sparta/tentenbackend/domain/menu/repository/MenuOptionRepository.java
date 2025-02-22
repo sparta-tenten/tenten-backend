@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 public interface MenuOptionRepository extends JpaRepository<MenuOption, UUID> {
-  // 특정 메뉴 ID로 메뉴 옵션 조회
-  List<MenuOption> findByMenuId(UUID menuId);
+  // is Deleted = false 인 항목만 조회
+  List<MenuOption> findByMenuIdAndIsDeletedFalse(UUID menuId);
 }
 

@@ -27,7 +27,7 @@ public class MenuOptionService {
     return menuOptionRepository.save(menuOption);
   }
 
-  // 특정 메뉴의 옵션 목록 조회
+  // 특정 메뉴의 옵션 목록 조회 ()
   @Transactional(readOnly = true)
   public List<MenuOption> getMenuOptionsByMenu(UUID menuId) {
     return menuOptionRepository.findByMenuId(menuId);
