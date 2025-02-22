@@ -21,12 +21,15 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.awt.print.Book;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "p_user")
 public class User extends BaseEntity {
 
