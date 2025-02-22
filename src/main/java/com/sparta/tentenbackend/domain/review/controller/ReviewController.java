@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,9 +40,16 @@ public class ReviewController {
     return ResponseEntity.ok(response);
   }
 
-  // 리뷰 목록 조회
+  // 가게별 리뷰 목록 조회
   @GetMapping
-  public ResponseEntity<Page<ReviewResponseDto>> getAllReviews(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+  public ResponseEntity<Page<ReviewResponseDto>> getAllReviewsByStore(@RequestParam("storeId") String storeId, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+    Page<ReviewResponseDto> reviews = reviewService.findAllReviewsByStore(storeId, page - 1, size, sortBy, isAsc);
+    return ResponseEntity.ok(reviews);
+  }
+
+  // 내가 작성한 리뷰 목록 조회
+  @GetMapping("/my-reviews")
+  public ResponseEntity<Page<ReviewResponseDto>> getMyAllReviews(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
     Page<ReviewResponseDto> reviews = reviewService.findAllReviews(userDetails.getUser(), page - 1, size, sortBy, isAsc);
     return ResponseEntity.ok(reviews);
   }

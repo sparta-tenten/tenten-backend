@@ -22,7 +22,9 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
   private final OwnerReviewRepository ownerReviewRepository;
   private final ReviewRepository reviewRepository;
 
-  // TODO review.getOrder().getStore().getUser().getId() 해결 방법
+  // TODO review.getOrder().getStore().getUser().getId() 리팩토링 필요함. > 결합도 too much
+  // TODO user.getRole() == UserRoleEnum.OWNER인 건 WebSecurityConfig에서 확인하도록 설정 필요함.
+
   // 리뷰에 사장님 답글 달기
   @Override
   public OwnerReviewResponseDto addOwnerReview(OwnerReviewRequestDto requestDto, User user) {
@@ -30,8 +32,8 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
     Review review = reviewRepository.findById(reviewId)
         .orElseThrow(() -> new NotFoundException("해당 리뷰를 찾을 수 없습니다."));
     // 유저가 OWNER고, 유저아이디가 가게 사장님 아이디와 일치할 때
-    Long ownerUserId = review.getOrder().getStore().getUser().getId();  // 혹시 이렇게 불러오는 거 말고 다른 방법이 있을까요?ㅠㅠ 전 모르겠음..
-    if (user.getRole() == UserRoleEnum.OWNER && user.getId() == ownerUserId) {
+    Long ownerUserId = review.getOrder().getStore().getUser().getId();
+    if (user.getId().equals(ownerUserId)) {
     OwnerReview ownerReview = ownerReviewRepository.save(new OwnerReview(requestDto, review));
     return new OwnerReviewResponseDto(ownerReview);
     } else {
@@ -46,7 +48,7 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
         .orElseThrow(() -> new NotFoundException("해당 답글을 찾을 수 없습니다."));
     // 유저아이디가 가게 사장님 아이디와 일치할 때
     Long ownerUserId = ownerReview.getReview().getOrder().getStore().getUser().getId();
-    if (user.getRole() == UserRoleEnum.OWNER && user.getId() == ownerUserId) {
+    if (user.getId().equals(ownerUserId)) {
     ownerReview.updateById(requestDto);
     ownerReviewRepository.save(ownerReview);
     return new OwnerReviewResponseDto(ownerReview);
@@ -62,7 +64,7 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
         .orElseThrow(() -> new NotFoundException("해당 답글을 찾을 수 없습니다."));
     // 유저아이디가 가게 사장님 아이디와 일치할 때
     Long ownerUserId = ownerReview.getReview().getOrder().getStore().getUser().getId();
-    if (user.getRole() == UserRoleEnum.OWNER && user.getId() == ownerUserId) {
+    if (user.getId().equals(ownerUserId)) {
     ownerReview.markAsDeleted();
     ownerReviewRepository.save(ownerReview);
     } else {

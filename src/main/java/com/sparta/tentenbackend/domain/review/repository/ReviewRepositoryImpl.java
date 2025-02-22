@@ -10,6 +10,7 @@ import com.sparta.tentenbackend.domain.review.entity.QReview;
 import com.sparta.tentenbackend.domain.review.entity.Review;
 import com.sparta.tentenbackend.domain.store.entity.QStore;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,30 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
   public ReviewRepositoryImpl(JPAQueryFactory queryFactory) {
     super(Review.class);
     this.queryFactory = queryFactory;
+  }
+
+  @Override
+  public Page<Review> findReviewsByStore(String storeId, String sortBy, boolean isAsc, Pageable pageable) {
+    QReview review = QReview.review;
+    QOrder order = QOrder.order;
+    QStore store = QStore.store;
+
+    // 정렬 조건 적용
+    OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortBy, isAsc);
+
+    JPAQuery<Review> query = queryFactory.selectFrom(review)
+        .join(review.order, order)
+        .join(order.store, store)
+        .where(
+            store.id.eq(UUID.fromString(storeId)),        // 특정 가게 ID
+            review.isDeleted.isFalse()   // 삭제되지 않은 리뷰만 조회
+        )
+        .orderBy(orderSpecifier);  // 정렬 적용
+
+    List<Review> reviews = getQuerydsl().applyPagination(pageable, query).fetch();
+    long total = query.fetchCount();
+
+    return new PageImpl<>(reviews, pageable, total);
   }
 
   @Override
@@ -78,9 +103,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport implements R
   private OrderSpecifier<?> getOrderSpecifier(String sortBy, boolean isAsc) {
     QReview review = QReview.review;
     // 정렬 기준을 받아 정렬 설정
-    if ("createdAt".equalsIgnoreCase(sortBy)) {
-      return isAsc ? review.createdAt.asc() : review.createdAt.desc();  // 생성일 기준
-    } else if ("updatedAt".equalsIgnoreCase(sortBy)) {
+    if ("updatedAt".equalsIgnoreCase(sortBy)) {
       return isAsc ? review.updatedAt.asc() : review.updatedAt.desc();  // 수정일 기준
     } else {
       // 기본적으로 생성일 기준으로 정렬

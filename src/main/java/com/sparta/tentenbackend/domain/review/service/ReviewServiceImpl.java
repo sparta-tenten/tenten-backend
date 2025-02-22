@@ -68,7 +68,18 @@ public class ReviewServiceImpl implements ReviewService {
     return new ReviewResponseDto(review);
   }
 
-  // 리뷰 목록 조회
+  // 모든 사용자가 볼 수 있는 가게별 리뷰 목록 조회
+  @Override
+  public Page<ReviewResponseDto> findAllReviewsByStore(String storeId, int page, int size, String sortBy, boolean isAsc) {
+    Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+    Sort sort = Sort.by(direction, sortBy);
+    Pageable pageable = PageRequest.of(page, getValidPageSize(size), sort);
+
+    Page<Review> reviews = reviewRepository.findReviewsByStore(storeId, sortBy, isAsc, pageable);
+    return reviews.map(ReviewResponseDto::new);
+  }
+
+  // 내가 작성한 리뷰 전체 목록 조회
   @Override
   public Page<ReviewResponseDto> findAllReviews(User user, int page, int size, String sortBy, boolean isAsc) {
     Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -84,8 +95,6 @@ public class ReviewServiceImpl implements ReviewService {
   private Sort getSortByField(String sortBy, Sort.Direction direction) {
     if ("updatedAt".equalsIgnoreCase(sortBy)) {
       return Sort.by(direction, "updatedAt");
-    } else if ("createdAt".equalsIgnoreCase(sortBy)) {
-      return Sort.by(direction, "createdAt");
     } else {
       // 기본값으로 생성일 기준 정렬
       return Sort.by(direction, "createdAt");
