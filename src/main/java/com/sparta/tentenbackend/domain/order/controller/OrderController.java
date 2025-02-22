@@ -8,6 +8,7 @@ import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderResponse;
 import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
+import com.sparta.tentenbackend.domain.order.service.OrderRepositoryService;
 import com.sparta.tentenbackend.domain.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderRepositoryService orderRepositoryService;
 
     // TODO AuthenticationPrincipal 추가
     @GetMapping
@@ -42,7 +44,7 @@ public class OrderController {
         @RequestParam(required = false) String keyword,
         @RequestParam(defaultValue = "0", required = false) int page,
         @RequestParam(defaultValue = "9", required = false) int size) {
-        Page<Order> orderList = orderService.getOrderList(
+        Page<Order> orderList = orderRepositoryService.getOrderList(
             new OrderSearchRequest(categoryId, deliveryType, orderStatus, keyword, page, size));
 
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
@@ -53,7 +55,7 @@ public class OrderController {
     @Operation(summary = "임시 주문 생성(결제 대기)")
     public ResponseEntity<TemporaryOrderResponse> createTemporaryOrder(
         @RequestBody @Valid TemporaryOrderRequest req) {
-        Order order = orderService.createTemporaryOrder(req);
+        Order order = orderRepositoryService.createTemporaryOrder(req);
         return ResponseEntity.ok(new TemporaryOrderResponse(order));
     }
 
@@ -61,8 +63,8 @@ public class OrderController {
     // TODO AuthenticationPrincipal 추가
     @PostMapping
     @Operation(summary = "주문하가")
-    public ResponseEntity<OrderResponse> order(@RequestBody @Valid OrderRequest req) {
-        return ResponseEntity.ok(new OrderResponse(orderService.createOrder(req)));
+    public ResponseEntity<OrderResponse> orderForCustomer(@RequestBody @Valid OrderRequest req) {
+        return ResponseEntity.ok(new OrderResponse(orderService.orderForCustomer(req)));
     }
 
     // TODO AuthenticationPrincipal 추가

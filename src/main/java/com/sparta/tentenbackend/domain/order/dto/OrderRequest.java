@@ -4,6 +4,7 @@ import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.OrderType;
 import com.sparta.tentenbackend.global.annotation.ValidEnum;
 import com.sparta.tentenbackend.global.annotation.ValidUUID;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -23,8 +24,12 @@ public class OrderRequest {
     @ValidEnum(enumClass = OrderType.class)
     private OrderType orderType;
     @ValidUUID
+    private UUID orderId;
+    @ValidUUID
     private UUID storeId;
+    @NotBlank
     private String deliveryAddress;
+    @NotBlank
     private String phoneNumber;
     private String request;
 }

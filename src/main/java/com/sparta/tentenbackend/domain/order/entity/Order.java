@@ -111,7 +111,7 @@ public class Order extends BaseEntity {
 
     public Order(TemporaryOrderRequest req, Store store) {
         this.deliveryType = req.getDeliveryType();
-        this.orderType = OrderType.OFFLINE;
+        this.orderType = OrderType.ONLINE;
         this.store = store;
         this.orderStatus = OrderStatus.WAITING_PAYMENT;
     }

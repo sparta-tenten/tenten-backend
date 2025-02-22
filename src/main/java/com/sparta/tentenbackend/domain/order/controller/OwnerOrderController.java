@@ -5,6 +5,7 @@ import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
 import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
+import com.sparta.tentenbackend.domain.order.service.OrderRepositoryService;
 import com.sparta.tentenbackend.domain.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OwnerOrderController {
 
     private final OrderService orderService;
+    private final OrderRepositoryService orderRepositoryService;
 
     // TODO AuthenticationPrincipal 추가
     @GetMapping("/{storeId}")
@@ -37,7 +39,7 @@ public class OwnerOrderController {
         @RequestParam(required = false) String keyword,
         @RequestParam(defaultValue = "0", required = false) int page,
         @RequestParam(defaultValue = "9", required = false) int size) {
-        Page<Order> orderList = orderService.getOrderListByStoreId(storeId,
+        Page<Order> orderList = orderRepositoryService.getOrderListByStoreId(storeId,
             new OrderSearchRequest(deliveryType, orderStatus, keyword, page, size));
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
     }
