@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OrderType {
     ONLINE("ONLINE"),
-    PHONE_CALL("PHONE_CALL");
+    OFFLINE("OFFLINE");
 
     private final String value;
 }

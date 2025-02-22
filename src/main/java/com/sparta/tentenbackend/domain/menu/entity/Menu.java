@@ -1,16 +1,18 @@
-
 package com.sparta.tentenbackend.domain.menu.entity;
+
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import lombok.*;
-import java.math.BigInteger;
-import java.util.UUID;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "p_menu")
@@ -20,6 +22,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @Builder
 public class Menu {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -27,22 +30,24 @@ public class Menu {
     @NotBlank(message = "메뉴 이름은 필수입니다.")
     private String name;
 
-
     @NotNull(message = "가격을 입력해주세요.")
     @Positive(message = "가격은 0보다 커야 합니다.")
-    private BigInteger price;
+    private Long price;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-//    @Enumerated(EnumType.STRING)
-//    private MenuStatus status; // ENUM (판매중, 하루품절, 숨김)
+    @Enumerated(EnumType.STRING)
+    private MenuStatus status; // ENUM (판매중, 하루품절, 숨김)
 
     private String image;
 
     @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
+
+    @OneToMany(mappedBy = "menu")
+    private List<MenuOption> menuOptionList;
 
     private String createdBy;
     private String updatedBy;
@@ -56,13 +61,13 @@ public class Menu {
 
     private LocalDateTime deletedAt;
 
-    //Soft Delete 플래그 추가
+    // Soft Delete 플래그 추가
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted = false;
 
     /**
-     *  Soft Delete를 수행하는 메서드
+     * Soft Delete를 수행하는 메서드
      */
     public void markAsDeleted(String deletedBy) {
         this.deleted = true;
@@ -70,4 +75,3 @@ public class Menu {
         this.deletedBy = deletedBy;
     }
 }
-

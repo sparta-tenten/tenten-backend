@@ -2,7 +2,7 @@ import csv
 
 # 입력 파일과 출력 파일 경로 설정
 input_file = 'town_code.txt'
-output_file = 'insert_queries.sql'
+output_file = 'insert_town_code_queries.sql'
 
 # 확장 가능한 시와 구 리스트 (추후 시와 구를 추가하면 된다)
 target_cities = ["서울특별시"]

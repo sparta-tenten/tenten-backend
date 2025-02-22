@@ -41,11 +41,4 @@ public class Category extends BaseEntity {
     this.setDeletedAt(LocalDateTime.now());
   }
 
-  /* user 구현 후
-  public Category(CategoryRequestDto requestDto, User user) {
-    this.name = requestDto.getName();
-    this.user = user;
-  }
-   */
-
 }
