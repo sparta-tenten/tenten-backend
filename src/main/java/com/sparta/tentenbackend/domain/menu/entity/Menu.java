@@ -1,6 +1,7 @@
 package com.sparta.tentenbackend.domain.menu.entity;
 
 import com.sparta.tentenbackend.domain.store.entity.Store;
+import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Menu {
+public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -53,25 +54,11 @@ public class Menu {
     private String updatedBy;
     private String deletedBy;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    private LocalDateTime deletedAt;
-
-    // Soft Delete 플래그 추가
-    @Builder.Default
-    @Column(name = "is_deleted", nullable = false)
-    private boolean deleted = false;
-
-    /**
-     * Soft Delete를 수행하는 메서드
-     */
+    // Soft Delete 메서드 수정
     public void markAsDeleted(String deletedBy) {
-        this.deleted = true;
-        this.deletedAt = LocalDateTime.now();
+        this.setDeleted(true);
+        this.setDeletedAt(LocalDateTime.now());
         this.deletedBy = deletedBy;
     }
 }

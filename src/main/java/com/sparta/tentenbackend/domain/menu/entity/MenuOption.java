@@ -1,8 +1,9 @@
 package com.sparta.tentenbackend.domain.menu.entity;
 
-import com.sparta.tentenbackend.domain.store.entity.Menu;
+import com.sparta.tentenbackend.domain.menu.entity.Menu;
 import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.*;
+import java.math.BigInteger;
 import lombok.*;
 import java.util.UUID;
 
@@ -24,31 +25,31 @@ public class MenuOption extends BaseEntity {
 
     private String category;
 
-    private Long price;
+    private BigInteger price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-    @Builder.Default
-    @Column(name = "is_deleted")
-    private boolean deleted = false;
 
-    /**
-     * Soft Delete를 수행하는 메서드
-     */
+    // 삭제/업데이트한 사용자 정보는 여기서 관리
+    private String deletedBy;
+    private String updatedBy;
+
     public void markAsDeleted(String deletedBy) {
-        this.deleted = true;
-        setDeletedAtToNow();
-        setDeletedBy(deletedBy);
+        this.setDeleted(true);  // 삭제 플래그 켜기
+        this.setDeletedAt(java.time.LocalDateTime.now());  // 현재 시간 저장
+        this.deletedBy = deletedBy;  // 누가 삭제했는지 저장
     }
+
+
 
     /**
      * 업데이트 타임스탬프 메서드 (선택적)
      */
     public void markAsUpdated(String updatedBy) {
-        setUpdatedAtToNow();
-        setUpdatedBy(updatedBy);
+        this.setUpdatedAt(java.time.LocalDateTime.now());  // 현재 시간 저장
+        this.updatedBy = updatedBy;  // 누가 업데이트했는지 저장
     }
 
     /**

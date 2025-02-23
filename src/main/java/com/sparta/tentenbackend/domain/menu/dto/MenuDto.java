@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class MenuDto {
   private UUID id;
   private String name;
-  private BigInteger price;
+  private Long price;
   private String description;
 
   public static MenuDto fromEntity(Menu menu) {
