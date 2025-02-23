@@ -7,6 +7,7 @@ import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepositoryQuery;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
+import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +44,9 @@ public class OrderRepositoryServiceImpl implements OrderRepositoryService {
         );
     }
 
-    // TODO User 추가
     @Override
     @Transactional
-    public Order createTemporaryOrder(TemporaryOrderRequest req) {
+    public Order createTemporaryOrder(TemporaryOrderRequest req, User user) {
         Store store = storeService.getStoreById(req.getStoreId());
         Order order = new Order(req.getDeliveryType(), store);
 

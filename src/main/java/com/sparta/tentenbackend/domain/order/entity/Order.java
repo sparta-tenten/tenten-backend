@@ -114,6 +114,14 @@ public class Order extends BaseEntity {
         this.orderStatus = OrderStatus.WAITING_PAYMENT;
     }
 
+    public Order(DeliveryType deliveryType, Store store, User user) {
+        this.deliveryType = deliveryType;
+        this.orderType = OrderType.ONLINE;
+        this.store = store;
+        this.orderStatus = OrderStatus.WAITING_PAYMENT;
+        this.user = user;
+    }
+
     public void cancel(Long cancelUserId) {
         this.orderStatus = OrderStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
