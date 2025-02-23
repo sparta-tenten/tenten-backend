@@ -10,7 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CategoryRequestDto {
   // 카테고리 ID
-  private UUID id;
+  private String id;
   // 카테고리 이름
   private String name;
+
+  // ID 데이터타입 String to UUID
+  public UUID getId() {
+    try {
+      return UUID.fromString(id);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
 }

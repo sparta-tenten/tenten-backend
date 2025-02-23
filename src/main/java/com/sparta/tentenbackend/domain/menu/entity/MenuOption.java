@@ -1,9 +1,9 @@
-
 package com.sparta.tentenbackend.domain.menu.entity;
+
+import com.sparta.tentenbackend.domain.store.entity.Menu;
+import com.sparta.tentenbackend.global.BaseEntity;
 import jakarta.persistence.*;
-import java.util.Date;
 import lombok.*;
-import java.math.BigInteger;
 import java.util.UUID;
 
 @Entity
@@ -13,33 +13,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MenuOption {
+public class MenuOption extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(nullable = false)
+    private String name;
+
     private String category;
-    private BigInteger price;
+
+    private Long price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-    private String createdBy;
-    private String updatedBy;
-    private String deletedBy;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date deletedAt;
-
-    // 데이터 숨김 처리를 위한 플래그
     @Builder.Default
     @Column(name = "is_deleted")
     private boolean deleted = false;
@@ -49,16 +39,16 @@ public class MenuOption {
      */
     public void markAsDeleted(String deletedBy) {
         this.deleted = true;
-        this.deletedAt = new Date();
-        this.deletedBy = deletedBy;
+        setDeletedAtToNow();
+        setDeletedBy(deletedBy);
     }
 
     /**
      * 업데이트 타임스탬프 메서드 (선택적)
      */
     public void markAsUpdated(String updatedBy) {
-        this.updatedAt = new Date();
-        this.updatedBy = updatedBy;
+        setUpdatedAtToNow();
+        setUpdatedBy(updatedBy);
     }
 
     /**
