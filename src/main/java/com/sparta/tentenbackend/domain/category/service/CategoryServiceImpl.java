@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryServiceImpl implements CategoryService {
   private final CategoryRepository categoryRepository;
 
+  // TODO /api/master/category 는 userRoleEnum.MASTER만 가능하도록 권한 설정
+
   // 카테고리 추가
   @Override
   @Transactional

@@ -7,8 +7,11 @@ import com.sparta.tentenbackend.domain.store.dto.StoreResponseDto;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.repository.StoreRepository;
 import com.sparta.tentenbackend.domain.user.entity.User;
+import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import com.sparta.tentenbackend.global.exception.UnauthorizedException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -91,6 +94,7 @@ public class StoreService {
         return storeRepository.findById(storeId)
             .orElseThrow(() -> new NotFoundException("해당 가게를 찾을 수 없습니다."));
     }
+
     // 스토어 검색/정렬 메서드
     public Page<StoreResponseDto> searchStores(String keyword, UUID categoryId, String townCode, int page, int size, String sortBy, boolean isAsc) {
 
@@ -115,4 +119,27 @@ public class StoreService {
         Page<Store> storePage = storeRepository.findAll(spec, pageable);
         return storePage.map(StoreResponseDto::new);
     }
+
+    public Page<StoreResponseDto> findStoresByCategory(String categoryId, String storeName, int page, int size, String sortBy, boolean isAsc) {
+        if (categoryId == null) {
+            throw new BadRequestException("카테고리를 선택하세요.");
+        }
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, getValidPageSize(size), sort);
+        Page<Store> stores = storeRepository.findStoresByCategory(UUID.fromString(categoryId), storeName, sortBy, isAsc, pageable);
+        return stores.map(StoreResponseDto::new);
+    }
+
+    // 페이지 노출 건수
+    private int getValidPageSize(int size) {
+        // 허용되는 페이지 크기 목록
+        List<Integer> allowedSizes = Arrays.asList(10, 30, 50);
+        // 페이지 크기가 허용된 값에 없으면 기본 10으로 설정
+        if (!allowedSizes.contains(size)) {
+            return 10;
+        }
+        return size;
+    }
+
 }

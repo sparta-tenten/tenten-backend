@@ -7,13 +7,12 @@ import com.sparta.tentenbackend.domain.review.service.ReviewService;
 import com.sparta.tentenbackend.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,10 +40,24 @@ public class ReviewController {
     return ResponseEntity.ok(response);
   }
 
-  // 리뷰 목록 조회
+  // 가게별 리뷰 목록 조회
   @GetMapping
-  public ResponseEntity<Page<ReviewResponseDto>> getAllReviews(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+  public ResponseEntity<Page<ReviewResponseDto>> getAllReviewsByStore(@RequestParam("storeId") String storeId, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+    Page<ReviewResponseDto> reviews = reviewService.findAllReviewsByStore(storeId, page - 1, size, sortBy, isAsc);
+    return ResponseEntity.ok(reviews);
+  }
+
+  // 내가 작성한 리뷰 목록 조회
+  @GetMapping("/my-reviews")
+  public ResponseEntity<Page<ReviewResponseDto>> getMyAllReviews(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
     Page<ReviewResponseDto> reviews = reviewService.findAllReviews(userDetails.getUser(), page - 1, size, sortBy, isAsc);
+    return ResponseEntity.ok(reviews);
+  }
+
+  // 리뷰 검색
+  @GetMapping("/search")
+  public ResponseEntity<Page<ReviewResponseDto>> searchReviewsByKeyword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("searchType") int searchType, @RequestParam("keyword") String keyword, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+    Page<ReviewResponseDto> reviews = reviewService.searchReviewsByKeyword(userDetails.getUser(), searchType, keyword, page - 1, size, sortBy, isAsc);
     return ResponseEntity.ok(reviews);
   }
 

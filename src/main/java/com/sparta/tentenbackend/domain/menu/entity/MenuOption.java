@@ -25,7 +25,8 @@ public class MenuOption extends BaseEntity {
 
     private String category;
 
-    private BigInteger price;
+//    private BigInteger price;
+    private Long price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)

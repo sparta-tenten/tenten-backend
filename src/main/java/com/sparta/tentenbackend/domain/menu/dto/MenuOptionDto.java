@@ -21,7 +21,8 @@ public class MenuOptionDto {
   private UUID id;
 
   private String category;
-  private BigInteger price;
+//  private BigInteger price;
+  private Long price;
 
   // 생성 메서드 (엔티티 -> DTO)
   public static MenuOptionDto fromEntity(MenuOption menuOption) {
