@@ -2,7 +2,8 @@ package com.sparta.tentenbackend.domain.order.dto;
 
 import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.OrderType;
-import jakarta.validation.constraints.NotBlank;
+import com.sparta.tentenbackend.global.annotation.ValidEnum;
+import com.sparta.tentenbackend.global.annotation.ValidUUID;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -17,11 +18,13 @@ public class OrderRequest {
     @NotEmpty
     @Size(min = 1)
     private List<OrderMenuRequest> orderMenuRequestList;
-    @NotBlank
+    @ValidEnum(enumClass = DeliveryType.class)
     private DeliveryType deliveryType;
-    @NotBlank
+    @ValidEnum(enumClass = OrderType.class)
     private OrderType orderType;
-    @NotBlank
+    @ValidUUID
+    private UUID orderId;
+    @ValidUUID
     private UUID storeId;
     private String deliveryAddress;
     private String phoneNumber;

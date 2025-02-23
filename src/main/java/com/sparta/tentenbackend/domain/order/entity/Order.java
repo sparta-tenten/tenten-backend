@@ -44,7 +44,7 @@ public class Order extends BaseEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private Long totalPrice;
+    private Long totalPrice = 0L;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -58,8 +58,7 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToOne
-    @JoinColumn(name = "payment_id")
+    @OneToOne(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Payment payment;
 
     private String deliveryAddress;
@@ -73,7 +72,6 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    // TODO nullable = false 추가하기
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -90,7 +88,8 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
-    public Order(OrderRequest req, UserRoleEnum userRole) {
+    public Order(OrderRequest req, UserRoleEnum userRole, Store store) {
+        this.store = store;
         this.deliveryType = req.getDeliveryType();
         this.request = req.getRequest();
         this.orderType = req.getOrderType();
@@ -106,6 +105,13 @@ public class Order extends BaseEntity {
             this.deliveryAddress = req.getDeliveryAddress();
             this.phoneNumber = req.getPhoneNumber();
         }
+    }
+
+    public Order(DeliveryType deliveryType, Store store) {
+        this.deliveryType = deliveryType;
+        this.orderType = OrderType.ONLINE;
+        this.store = store;
+        this.orderStatus = OrderStatus.WAITING_PAYMENT;
     }
 
     public void cancel(Long cancelUserId) {

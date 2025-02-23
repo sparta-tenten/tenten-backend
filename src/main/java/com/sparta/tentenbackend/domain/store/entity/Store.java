@@ -29,7 +29,7 @@ public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;  // 가게 ID (UUID)
+    private UUID id;  // 가게 ID (ValidUUID)
 
     @Column(nullable = false)
     private String name;  // 가게명
