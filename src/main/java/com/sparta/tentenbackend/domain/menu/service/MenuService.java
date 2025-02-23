@@ -10,6 +10,10 @@ import jakarta.transaction.Transactional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.UUID;
@@ -83,5 +87,17 @@ public class MenuService {
     Menu menu = getMenuById(menuId);
     menu.markAsDeleted("삭제한 유저");
     menuRepository.save(menu);// 실제 삭제 대신 Soft Delete
+  }
+
+  //검색/정렬/페이징
+  public Page<MenuDto> searchMenus(UUID storeId, String keyword, String sortBy, String direction, int page, int size) {
+    Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+    Pageable pageable = PageRequest.of(page, size, sort);
+
+    Page<Menu> menuPage = menuRepository.findByStoreIdAndDeletedFalseAndNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+        storeId, keyword, keyword, pageable
+    );
+
+    return menuPage.map(MenuDto::fromEntity);
   }
 }
