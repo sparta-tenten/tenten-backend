@@ -14,7 +14,8 @@ public enum OrderStatus {
     DELIVERING("DELIVERING"),
     DELIVERY_COMPLETED("DELIVERY_COMPLETED"),
     PICKED_UP("PICKED_UP"),
-    CANCELLED("CANCELLED");
+    CANCELLED("CANCELLED"),
+    REJECTED("REJECTED");
 
     private final String value;
 }

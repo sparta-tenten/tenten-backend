@@ -18,4 +18,6 @@ public interface OrderRepositoryService {
     Order createTemporaryOrder(TemporaryOrderRequest req);
 
     void acceptOrder(UUID orderId, User owner);
+
+    void rejectOrder(UUID orderId, User owner);
 }

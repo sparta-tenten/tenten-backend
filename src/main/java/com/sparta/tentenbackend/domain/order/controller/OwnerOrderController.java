@@ -63,6 +63,15 @@ public class OwnerOrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/reject/{orderId}")
+    @Operation(summary = "주문 거부하기")
+    public ResponseEntity<Void> rejectOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
+    UserDetailsImpl userDetails) {
+        orderRepositoryService.acceptOrder(orderId, userDetails.getUser());
+
+        return ResponseEntity.noContent().build();
+    }
+
 //    @PostMapping("/cancel/{orderId}")
 //    @Operation(summary = "사장님 주문 취소하기")
 //    public ResponseEntity<Void> cancelOrder(@PathVariable ValidUUID orderId) {

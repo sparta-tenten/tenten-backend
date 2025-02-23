@@ -72,4 +72,19 @@ public class OrderRepositoryServiceImpl implements OrderRepositoryService {
 
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
     }
+
+    @Override
+    public void rejectOrder(UUID orderId, User owner) {
+        Order order = getOrderById(orderId);
+
+        if (!order.getStore().getUser().getId().equals(owner.getId())) {
+            throw new UnauthorizedException("가게 주인이 아닙니다!");
+        }
+
+        if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
+            throw new BadRequestException("주문 거절이 가능한 상태가 아닙니다!");
+        }
+
+        order.setOrderStatus(OrderStatus.REJECTED);
+    }
 }
