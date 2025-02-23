@@ -1,6 +1,8 @@
+
 package com.sparta.tentenbackend.domain.user.controller;
 
 
+import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.dto.SignupRequestDto;
 import com.sparta.tentenbackend.domain.user.dto.UserProfileResponseDto;
 import com.sparta.tentenbackend.domain.user.dto.UserUpdateRequestDto;
@@ -22,7 +24,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Slf4j
-
 public class UserController {
 
     private final UserService userService;
@@ -90,7 +93,7 @@ public class UserController {
         User user = userDetails.getUser();
         return new UserProfileResponseDto(user.getUserName(), user.getEmail(), user.getAddress(),
             user.getDetailAddress(),
-            user.getPhoneNumber(), user.getRole().getRole());
+            user.getPhoneNumber(), user.getRole().getRole().substring(5));
     }
 
 
@@ -108,6 +111,23 @@ public class UserController {
             userDetails);
 
         return userUpdateResponse;
+    }
+
+
+    @DeleteMapping("/user/me")
+    @Operation(summary = "유저 삭제")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return ResponseEntity.ok(userService.deleteUser(userDetails));
+    }
+
+
+    @GetMapping("/test")
+    @Operation(summary = "유저 정보 조회")
+    public ResponseEntity<?> getTest(
+    ) {
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("권한부여 완료");
     }
 
 

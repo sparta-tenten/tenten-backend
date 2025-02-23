@@ -1,9 +1,10 @@
-package com.sparta.tentenbackend.domain.user.dto;
 
+package com.sparta.tentenbackend.domain.user.dto;
 
 
 import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,5 +31,8 @@ public class SignupRequestDto {
 
     private UserRoleEnum role;  // OWNER, MANAGER, MASTER 등 원하는 권한 요청
     private String adminToken;
+
+    @NotBlank(message = "법정동 코드를 입력하세요.")
+    private String townCode;
 
 }

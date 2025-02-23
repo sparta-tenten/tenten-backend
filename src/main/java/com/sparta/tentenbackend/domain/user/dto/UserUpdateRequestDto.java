@@ -29,5 +29,8 @@ public class UserUpdateRequestDto {
     @NotBlank(message = "상세 주소는 필수 입력 항목입니다.")
     private String detailAddress;
 
+    @NotBlank(message = "법정동 코드는 필수 입력 항목입니다.")
+    private String townCode;
+
 
 }

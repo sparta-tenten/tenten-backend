@@ -1,3 +1,4 @@
+
 package com.sparta.tentenbackend.domain.user.entity;
 
 
@@ -19,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,7 +63,7 @@ public class User extends BaseEntity {
     private List<DeliveryAddress> deliveryAddressList;
 
     public User(String userName, String password, String email, UserRoleEnum role, String address,
-        String detailAddress, String phoneNumber) {
+        String detailAddress, String phoneNumber, Town town) {
         this.userName = userName;
         this.password = password;
         this.email = email;
@@ -69,6 +71,7 @@ public class User extends BaseEntity {
         this.address = address;
         this.detailAddress = detailAddress;
         this.phoneNumber = phoneNumber;
+        this.town = town;
     }
 
     public void userUpdate(String password, String email, String address, String detailAddress,
@@ -79,6 +82,11 @@ public class User extends BaseEntity {
         this.address = address;
         this.detailAddress = detailAddress;
 
+    }
+
+    public void deleteUser() {
+        this.setDeleted(true);
+        this.setDeletedAt(LocalDateTime.now());
     }
 
 
