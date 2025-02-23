@@ -48,7 +48,7 @@ public class OrderRepositoryServiceImpl implements OrderRepositoryService {
     @Transactional
     public Order createTemporaryOrder(TemporaryOrderRequest req) {
         Store store = storeService.getStoreById(req.getStoreId());
-        Order order = new Order(req, store);
+        Order order = new Order(req.getDeliveryType(), store);
 
         return orderRepository.save(order);
     }

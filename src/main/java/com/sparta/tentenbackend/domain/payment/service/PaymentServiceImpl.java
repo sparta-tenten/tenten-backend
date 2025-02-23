@@ -24,7 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment createPayment(PaymentRequest paymentRequest) {
         Order order = orderRepositoryService.getOrderById(paymentRequest.getOrderId());
 
-        Payment payment = new Payment(paymentRequest, order);
+        Payment payment = Payment.createCompletedPayment(paymentRequest, order);
         return paymentRepository.save(payment);
     }
 

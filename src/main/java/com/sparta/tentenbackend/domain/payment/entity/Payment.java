@@ -15,6 +15,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +24,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "p_payment")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Payment extends BaseEntity {
 
     @Id
@@ -44,13 +48,24 @@ public class Payment extends BaseEntity {
     @JoinColumn(name = "order_id", unique = true, nullable = false)
     private Order order;
 
-    public Payment(PaymentRequest paymentRequest, Order order) {
-        this.amount = paymentRequest.getAmount();
-        this.buyerName = paymentRequest.getBuyerName();
-        this.phoneNumber = paymentRequest.getPhoneNumber();
-        this.paymentMethod = paymentRequest.getPaymentMethod();
-        this.paymentTime = LocalDateTime.now();
-        this.order = order;
-        this.paymentStatus = PaymentStatus.COMPLETED;
+    public static Payment createCompletedPayment(PaymentRequest req, Order order) {
+        return Payment.builder()
+            .amount(req.getAmount())
+            .buyerName(req.getBuyerName())
+            .phoneNumber(req.getPhoneNumber())
+            .paymentMethod(req.getPaymentMethod())
+            .paymentTime(LocalDateTime.now())
+            .order(order)
+            .paymentStatus(PaymentStatus.COMPLETED)
+            .build();
+    }
+
+    public static Payment createWaitingPayment(Long amount, Order order) {
+        return Payment.builder()
+            .amount(amount)
+            .paymentMethod(PaymentMethod.CARD)
+            .order(order)
+            .paymentStatus(PaymentStatus.WAITING)
+            .build();
     }
 }

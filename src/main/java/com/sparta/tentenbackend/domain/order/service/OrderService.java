@@ -22,4 +22,6 @@ public interface OrderService {
     void rejectOrder(UUID orderId, User owner);
 
     void checkOwner(Order order, User owner);
+
+    Order orderForOwner(OrderRequest req, User owner);
 }

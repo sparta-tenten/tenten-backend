@@ -12,7 +12,11 @@ import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
+import com.sparta.tentenbackend.domain.payment.entity.Payment;
+import com.sparta.tentenbackend.domain.payment.repository.PaymentRepository;
 import com.sparta.tentenbackend.domain.payment.service.PaymentService;
+import com.sparta.tentenbackend.domain.store.entity.Store;
+import com.sparta.tentenbackend.domain.store.service.StoreService;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.UnauthorizedException;
@@ -36,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
     private final MenuRepository menuRepository;
     private final MenuOptionRepository menuOptionRepository;
     private final PaymentService paymentService;
+    private final StoreService storeService;
+    private final PaymentRepository paymentRepository;
 
     // TODO User(주문한 사람) 추가
     @Override
@@ -46,10 +52,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = orderRepositoryService.getOrderById(req.getOrderId());
+
+        setDeliveryInfo(req, order);
         order.setRequest(req.getRequest());
         order.setOrderStatus(OrderStatus.WAITING_ORDER_RECEIVE);
-        order.setDeliveryAddress(req.getDeliveryAddress());
-        order.setPhoneNumber(req.getPhoneNumber());
         setMenuList(order, req.getOrderMenuRequestList());
 
         return orderRepository.save(order);
@@ -139,9 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public void acceptOrder(UUID orderId, User owner) {
         Order order = orderRepositoryService.getOrderById(orderId);
 
-        if (!order.getStore().getUser().getId().equals(owner.getId())) {
-            throw new UnauthorizedException("가게 주인이 아닙니다!");
-        }
+        checkOwner(order, owner);
 
         if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
             throw new BadRequestException("주문 수락이 가능한 상태가 아닙니다!");
@@ -155,9 +159,7 @@ public class OrderServiceImpl implements OrderService {
     public void rejectOrder(UUID orderId, User owner) {
         Order order = orderRepositoryService.getOrderById(orderId);
 
-        if (!order.getStore().getUser().getId().equals(owner.getId())) {
-            throw new UnauthorizedException("가게 주인이 아닙니다!");
-        }
+        checkOwner(order, owner);
 
         if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
             throw new BadRequestException("주문 거절이 가능한 상태가 아닙니다!");
@@ -171,6 +173,35 @@ public class OrderServiceImpl implements OrderService {
     public void checkOwner(Order order, User owner) {
         if (!order.getStore().getUser().getId().equals(owner.getId())) {
             throw new UnauthorizedException("가게 주인이 아닙니다!");
+        }
+    }
+
+    @Override
+    @Transactional
+    public Order orderForOwner(OrderRequest req, User owner) {
+        Store store = storeService.getStoreById(req.getStoreId());
+        Order order = new Order(req.getDeliveryType(), store);
+
+        setDeliveryInfo(req, order);
+        order.setRequest(req.getRequest());
+        order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+        setMenuList(order, req.getOrderMenuRequestList());
+
+        Payment payment = Payment.createWaitingPayment(order.getTotalPrice(), order);
+
+        orderRepository.save(order);
+        paymentRepository.save(payment);
+
+        return order;
+    }
+
+    private void setDeliveryInfo(OrderRequest req, Order order) {
+        if (order.getDeliveryType().equals(DeliveryType.DELIVERY)) {
+            if (req.getDeliveryAddress() == null || req.getPhoneNumber() == null) {
+                throw new BadRequestException("배달 주문 시 주소와 전화번호가 필요합니다.");
+            }
+            order.setDeliveryAddress(req.getDeliveryAddress());
+            order.setPhoneNumber(req.getPhoneNumber());
         }
     }
 }

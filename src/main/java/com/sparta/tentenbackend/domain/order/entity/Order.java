@@ -2,7 +2,6 @@ package com.sparta.tentenbackend.domain.order.entity;
 
 import com.sparta.tentenbackend.domain.menu.entity.MenuOrder;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
-import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderRequest;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.user.entity.User;
@@ -73,7 +72,6 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    // TODO nullable = false 추가하기
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -109,8 +107,8 @@ public class Order extends BaseEntity {
         }
     }
 
-    public Order(TemporaryOrderRequest req, Store store) {
-        this.deliveryType = req.getDeliveryType();
+    public Order(DeliveryType deliveryType, Store store) {
+        this.deliveryType = deliveryType;
         this.orderType = OrderType.ONLINE;
         this.store = store;
         this.orderStatus = OrderStatus.WAITING_PAYMENT;
