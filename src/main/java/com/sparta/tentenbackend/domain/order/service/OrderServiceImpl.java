@@ -102,43 +102,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Override
-    public void setMenuList(Order order, List<OrderMenuRequest> orderMenuRequestList) {
-        List<UUID> menuIdList = orderMenuRequestList.stream().map(OrderMenuRequest::getId)
-            .toList();
-        Map<UUID, Menu> menuMap = menuRepository.findAllByIdIn(menuIdList).stream()
-            .collect(Collectors.toMap(Menu::getId, menu -> menu));
-
-        List<UUID> optionIdList = orderMenuRequestList.stream()
-            .flatMap(
-                orderMenuRequest -> Optional.ofNullable(orderMenuRequest.getOptionIdList()).orElse(
-                    Collections.emptyList()).stream()).toList();
-
-        Map<UUID, List<MenuOption>> optionMap = menuOptionRepository.findAllByIdIn(optionIdList)
-            .stream()
-            .collect(Collectors.groupingBy(op -> op.getMenu().getId()));
-
-        List<MenuOrder> menuOrderList = new ArrayList<>();
-        long totalPrice = 0L;
-        for (OrderMenuRequest menuReq : orderMenuRequestList) {
-            Menu menu = menuMap.get(menuReq.getId());
-            MenuOrder menuOrder = new MenuOrder(menu, order, menuReq.getQuantity());
-
-            List<MenuOption> menuOptionList = optionMap.get(menuOrder.getMenu().getId());
-
-            long menuPrice = menu.getPrice() * menuOrder.getQuantity();
-            if (menuOptionList != null) {
-                menuPrice += menuOptionList.stream().map(MenuOption::getPrice)
-                    .reduce(0L, Long::sum);
-                menuOrder.setMenuOrderOptionList(menuOptionList.stream()
-                    .map(menuOption -> new MenuOrderOption(menuOrder, menuOption)).toList());
-            }
-            totalPrice += menuPrice;
-            order.getMenuOrderList().add(menuOrder);
-        }
-        order.setTotalPrice(totalPrice);
-    }
-
 
     @Override
     @Transactional
@@ -178,9 +141,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Order orderForOwner(OrderRequest req, User owner) {
+    public Order deliveryOrderForOwner(OrderRequest req, User owner) {
         Store store = storeService.getStoreById(req.getStoreId());
-        Order order = new Order(req.getDeliveryType(), store);
+        Order order = new Order(DeliveryType.DELIVERY, store);
+
+        checkOwner(order, owner);
 
         setDeliveryInfo(req, order);
         order.setRequest(req.getRequest());
@@ -195,6 +160,19 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    @Override
+    public Order pickupOrderForOwner(OrderRequest req, User owner) {
+        Store store = storeService.getStoreById(req.getStoreId());
+        Order order = new Order(DeliveryType.DELIVERY, store);
+
+        checkOwner(order, owner);
+
+        order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+        setMenuList(order, req.getOrderMenuRequestList());
+
+        return orderRepository.save(order);
+    }
+
     private void setDeliveryInfo(OrderRequest req, Order order) {
         if (order.getDeliveryType().equals(DeliveryType.DELIVERY)) {
             if (req.getDeliveryAddress() == null || req.getPhoneNumber() == null) {
@@ -203,5 +181,41 @@ public class OrderServiceImpl implements OrderService {
             order.setDeliveryAddress(req.getDeliveryAddress());
             order.setPhoneNumber(req.getPhoneNumber());
         }
+    }
+
+    private void setMenuList(Order order, List<OrderMenuRequest> orderMenuRequestList) {
+        List<UUID> menuIdList = orderMenuRequestList.stream().map(OrderMenuRequest::getId)
+            .toList();
+        Map<UUID, Menu> menuMap = menuRepository.findAllByIdIn(menuIdList).stream()
+            .collect(Collectors.toMap(Menu::getId, menu -> menu));
+
+        List<UUID> optionIdList = orderMenuRequestList.stream()
+            .flatMap(
+                orderMenuRequest -> Optional.ofNullable(orderMenuRequest.getOptionIdList()).orElse(
+                    Collections.emptyList()).stream()).toList();
+
+        Map<UUID, List<MenuOption>> optionMap = menuOptionRepository.findAllByIdIn(optionIdList)
+            .stream()
+            .collect(Collectors.groupingBy(op -> op.getMenu().getId()));
+
+        List<MenuOrder> menuOrderList = new ArrayList<>();
+        long totalPrice = 0L;
+        for (OrderMenuRequest menuReq : orderMenuRequestList) {
+            Menu menu = menuMap.get(menuReq.getId());
+            MenuOrder menuOrder = new MenuOrder(menu, order, menuReq.getQuantity());
+
+            List<MenuOption> menuOptionList = optionMap.get(menuOrder.getMenu().getId());
+
+            long menuPrice = menu.getPrice() * menuOrder.getQuantity();
+            if (menuOptionList != null) {
+                menuPrice += menuOptionList.stream().map(MenuOption::getPrice)
+                    .reduce(0L, Long::sum);
+                menuOrder.setMenuOrderOptionList(menuOptionList.stream()
+                    .map(menuOption -> new MenuOrderOption(menuOrder, menuOption)).toList());
+            }
+            totalPrice += menuPrice;
+            order.getMenuOrderList().add(menuOrder);
+        }
+        order.setTotalPrice(totalPrice);
     }
 }

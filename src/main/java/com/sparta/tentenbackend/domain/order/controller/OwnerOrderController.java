@@ -76,11 +76,20 @@ public class OwnerOrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping
+    @PostMapping("/delivery")
     @Operation(summary = "사장님의 주문 접수(배달)")
     public ResponseEntity<OrderResponse> deliveryOrder(@RequestBody OrderRequest orderRequest,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Order order = orderService.orderForOwner(orderRequest, userDetails.getUser());
+        Order order = orderService.deliveryOrderForOwner(orderRequest, userDetails.getUser());
+
+        return ResponseEntity.ok(new OrderResponse(order));
+    }
+
+    @PostMapping("/pickup")
+    @Operation(summary = "사장님의 주문 접수(포장)")
+    public ResponseEntity<OrderResponse> pickupOrder(@RequestBody OrderRequest orderRequest,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Order order = orderService.pickupOrderForOwner(orderRequest, userDetails.getUser());
 
         return ResponseEntity.ok(new OrderResponse(order));
     }
@@ -90,11 +99,5 @@ public class OwnerOrderController {
 //    public ResponseEntity<Void> cancelOrder(@PathVariable ValidUUID orderId) {
 //        orderService.cancelOrder(orderId);
 //        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping
-//    @Operation(summary = "사장님의 주문 접수")
-//    public ResponseEntity<OrderResponse> order(@RequestBody OrderRequest orderRequest) {
-//
 //    }
 }
