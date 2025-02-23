@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface MenuOptionRepository extends JpaRepository<MenuOption, UUID> {
 
     // isDeleted = false 인 항목만 조회
-    List<MenuOption> findByMenuIdAndDeletedFalse(UUID menuId);
+    List<MenuOption> findByMenuIdAndIsDeletedFalse(UUID menuId);
 
     // UUID 리스트로 조회
     List<MenuOption> findAllByIdIn(List<UUID> idList);

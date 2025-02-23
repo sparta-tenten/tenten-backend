@@ -32,7 +32,7 @@ public class MenuOptionService {
   // 특정 메뉴의 옵션 목록 조회 (숨김 처리 반영, DTO 변환)
   @Transactional(readOnly = true)
   public List<MenuOptionDto> getMenuOptionsByMenu(UUID menuId) {
-    return menuOptionRepository.findByMenuIdAndDeletedFalse(menuId)
+    return menuOptionRepository.findByMenuIdAndIsDeletedFalse(menuId)
         .stream()
         .map(MenuOptionDto::fromEntity)  // 엔티티를 DTO로 변환
         .collect(Collectors.toList());

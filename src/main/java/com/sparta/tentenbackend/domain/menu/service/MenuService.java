@@ -43,7 +43,7 @@ public class MenuService {
   // 가게별 메뉴 목록 조회
   @Transactional
   public List<MenuDto> getMenusByStore(UUID storeId) {
-    return menuRepository.findByStoreIdAndDeletedFalse(storeId)
+    return menuRepository.findByStoreIdAndIsDeletedFalse(storeId)
         .stream()
         .map(MenuDto::fromEntity)
         .collect(Collectors.toList());

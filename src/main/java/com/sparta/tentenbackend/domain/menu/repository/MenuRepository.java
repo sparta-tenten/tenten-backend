@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface MenuRepository extends JpaRepository<Menu, UUID> {
 
     // Soft Delete 제외하고 Store에 속한 메뉴 조회
-    List<Menu> findByStoreIdAndDeletedFalse(UUID storeId);
+    List<Menu> findByStoreIdAndIsDeletedFalse(UUID storeId);
 
     // UUID 리스트로 메뉴 조회
     List<Menu> findAllByIdIn(List<UUID> idList);
