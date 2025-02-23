@@ -15,7 +15,8 @@ spring:
         show_sql: true
 
   config:
-    import: optional:file:.env[.properties]
+    import: "optional:file:.env"
+
 
   servlet:
     multipart:
@@ -35,15 +36,17 @@ aws:
     bucket:
       name: ${BUCKET_NAME}
 
+admin:
+  token:
+    owner: ${OWNER_SECRET_CODE}
+    manager: ${MANAGER_SECRET_CODE}
+    master: ${MASTER_SECRET_CODE}
 gemini:
   api:
     key: ${GEMINI_API_KEY}
   model:
     name: ${GEMINI_MODEL_NAME}
 
-admin:
-  token:
-    owner: ${OWNER_SECRET_CODE}
-    manager: ${MANAGER_SECRET_CODE}
-    master: ${MASTER_SECRET_CODE}
-
+jwt:
+  secret:
+     key: ${JWT_SECRET_KEY}
