@@ -1,3 +1,4 @@
+
 package com.sparta.tentenbackend.domain.user.entity;
 
 
@@ -17,14 +18,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.awt.print.Book;
+import jakarta.validation.constraints.Email;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
@@ -37,11 +37,12 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
-    private String userName;            // TODO: 최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)
+    private String userName;
     @Column(nullable = false)
     @JsonIgnore
-    private String password;            // TODO:  최소 8자 이상, 15자 이하이며 알파벳 대소문자(a~z, A~Z), 숫자(0~9), 특수문자
+    private String password;
     @Column(nullable = false, unique = true)
+    @Email(message = "올바른 이메일 형식을 입력하세요.")
     private String email;
 
     @Enumerated(value = EnumType.STRING)
@@ -62,7 +63,7 @@ public class User extends BaseEntity {
     private List<DeliveryAddress> deliveryAddressList;
 
     public User(String userName, String password, String email, UserRoleEnum role, String address,
-        String detailAddress, String phoneNumber) {
+        String detailAddress, String phoneNumber, Town town) {
         this.userName = userName;
         this.password = password;
         this.email = email;
@@ -70,6 +71,22 @@ public class User extends BaseEntity {
         this.address = address;
         this.detailAddress = detailAddress;
         this.phoneNumber = phoneNumber;
+        this.town = town;
+    }
+
+    public void userUpdate(String password, String email, String address, String detailAddress,
+        String phoneNumber) {
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.detailAddress = detailAddress;
+
+    }
+
+    public void deleteUser() {
+        this.setDeleted(true);
+        this.setDeletedAt(LocalDateTime.now());
     }
 
 
@@ -102,6 +119,3 @@ public class User extends BaseEntity {
      */
 
 }
-
-
-

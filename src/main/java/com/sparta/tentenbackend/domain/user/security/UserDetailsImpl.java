@@ -1,13 +1,19 @@
 package com.sparta.tentenbackend.domain.user.security;
 
 import com.sparta.tentenbackend.domain.user.entity.User;
+
 import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import java.util.ArrayList;
-import java.util.Collection;
+import lombok.Getter;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.Collections;
+
+@Getter
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
@@ -20,26 +26,24 @@ public class UserDetailsImpl implements UserDetails {
         return user;
     }
 
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
-
-    @Override
-    public String getUsername() {
-        return user.getUserName();
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         UserRoleEnum role = user.getRole();
         String authority = role.getAuthority();
 
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(simpleGrantedAuthority);
+        return Collections.singletonList(new SimpleGrantedAuthority(authority));
+    }
 
-        return authorities;
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();  // 유저 비밀번호 반환
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getUserName();  // 유저 이름 반환
     }
 
     @Override

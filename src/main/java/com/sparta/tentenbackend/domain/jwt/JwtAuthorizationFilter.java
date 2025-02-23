@@ -1,6 +1,8 @@
+
 package com.sparta.tentenbackend.domain.jwt;
 
 import com.sparta.tentenbackend.domain.jwt.service.JwtBlacklistService;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import com.sparta.tentenbackend.domain.user.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -29,7 +31,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
         FilterChain filterChain) throws ServletException, IOException {
-
 
         String tokenValue = jwtUtil.getTokenFromRequest(req);
 
@@ -68,16 +69,37 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
 
-    // 인증 처리
     public void setAuthentication(String username) {
         log.info("🔍 JwtAuthorizationFilter 실행됨");
 
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(username);
-        context.setAuthentication(authentication);
+        // ✅ UserDetails 가져오기
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+        if (!(userDetails instanceof UserDetailsImpl)) {
+            log.error("❌ UserDetails가 UserDetailsImpl이 아닙니다. 인증 실패");
+            return;
+        }
+
+        log.info("👤 유저 권한: {}", userDetails.getAuthorities());
+
+        //  Authentication 객체 생성
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+            userDetails.getAuthorities());
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        //  SecurityContext 유지 전략 (ThreadLocal)
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_THREADLOCAL);
+//        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+
+        log.info(" 최종 SecurityContext Authentication: {}",
+            SecurityContextHolder.getContext().getAuthentication());
     }
+
 
     // 인증 객체 생성
     private Authentication createAuthentication(String username) {
@@ -94,6 +116,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         return path.startsWith("/swagger-ui") ||
             path.startsWith("/v3/api-docs") ||
             path.startsWith("/swagger-resources") ||
-            path.startsWith("/webjars/");
+            path.startsWith("/webjars/") ||
+            path.startsWith("/api/auth/") ||
+            path.equals("/");
     }
 }
