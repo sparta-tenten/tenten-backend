@@ -11,6 +11,11 @@ import com.sparta.tentenbackend.global.exception.NotFoundException;
 import com.sparta.tentenbackend.global.exception.UnauthorizedException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,5 +90,29 @@ public class StoreService {
     public Store getStoreById(UUID storeId) {
         return storeRepository.findById(storeId)
             .orElseThrow(() -> new NotFoundException("해당 가게를 찾을 수 없습니다."));
+    }
+    // 스토어 검색/정렬 메서드
+    public Page<StoreResponseDto> searchStores(String keyword, UUID categoryId, String townCode, int page, int size, String sortBy, boolean isAsc) {
+
+        Pageable pageable = PageRequest.of(page, size, isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+
+        // 동적 쿼리 생성
+        Specification<Store> spec = Specification.where(null);
+
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.like(root.get("name"), "%" + keyword + "%"));
+        }
+
+        if (categoryId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId));
+        }
+
+        if (townCode != null && !townCode.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("town").get("code"), townCode));
+        }
+
+        // 조회 및 DTO 변환
+        Page<Store> storePage = storeRepository.findAll(spec, pageable);
+        return storePage.map(StoreResponseDto::new);
     }
 }

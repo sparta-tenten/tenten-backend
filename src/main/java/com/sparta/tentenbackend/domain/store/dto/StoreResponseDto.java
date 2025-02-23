@@ -14,6 +14,7 @@ public class StoreResponseDto {
   private String address;
   private String phoneNumber;
   private String image;
+  private int storeGrade;
 
   public StoreResponseDto(Store store) {
     this.id = store.getId();
@@ -21,5 +22,6 @@ public class StoreResponseDto {
     this.address = store.getAddress();
     this.phoneNumber = store.getPhoneNumber();
     this.image = store.getImage();
+    this.storeGrade = store.getStoreGrade();
   }
 }

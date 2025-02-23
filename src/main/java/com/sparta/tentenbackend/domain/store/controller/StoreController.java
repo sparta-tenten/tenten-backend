@@ -7,6 +7,7 @@ import com.sparta.tentenbackend.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -56,6 +58,21 @@ public class StoreController {
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         storeService.deleteStore(storeId, userDetails.getUser());
         return ResponseEntity.noContent().build();
+    }
+
+    // 스토어 검색/정렬 API
+    @GetMapping("/search")
+    public ResponseEntity<Page<StoreResponseDto>> searchStores(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) UUID categoryId,
+        @RequestParam(required = false) String townCode,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "createdAt") String sortBy,
+        @RequestParam(defaultValue = "false") boolean isAsc
+    ) {
+        Page<StoreResponseDto> stores = storeService.searchStores(keyword, categoryId, townCode, page, size, sortBy, isAsc);
+        return ResponseEntity.ok(stores);
     }
 
 
