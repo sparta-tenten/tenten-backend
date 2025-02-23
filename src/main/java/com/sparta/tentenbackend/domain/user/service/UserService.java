@@ -3,9 +3,12 @@ package com.sparta.tentenbackend.domain.user.service;
 
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.dto.SignupRequestDto;
+import com.sparta.tentenbackend.domain.user.dto.UserUpdateRequestDto;
+import com.sparta.tentenbackend.domain.user.dto.UserUpdateResponse;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import com.sparta.tentenbackend.domain.user.repository.UserRepository;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import java.util.Optional;
 import com.sparta.tentenbackend.domain.jwt.JwtUtil;
 import com.sparta.tentenbackend.domain.user.dto.LoginRequestDto;
@@ -104,5 +107,24 @@ public class UserService {
 
     }
 
+    @Transactional
+    public UserUpdateResponse updateUser(UserUpdateRequestDto requestDto,
+        UserDetailsImpl userDetails) {
+
+        String username = userDetails.getUsername();
+        String password = bCryptPasswordEncoder.encode(requestDto.getPassword());
+        // 사용자 확인
+        User user = userRepository.findByUserName(username).orElseThrow(
+            () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+        );
+
+        user.userUpdate(password, requestDto.getEmail(), requestDto.getAddress(),
+            requestDto.getDetailAddress(), requestDto.getPhoneNumber());
+        userRepository.save(user);
+        return new UserUpdateResponse(username, requestDto.getEmail(), requestDto.getAddress(),
+            requestDto.getDetailAddress(), requestDto.getDetailAddress());
+
+
     }
 
+}
