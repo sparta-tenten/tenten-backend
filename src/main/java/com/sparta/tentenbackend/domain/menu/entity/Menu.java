@@ -1,26 +1,19 @@
 package com.sparta.tentenbackend.domain.menu.entity;
 
 import com.sparta.tentenbackend.domain.store.entity.Store;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import com.sparta.tentenbackend.global.BaseEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "p_menu")
@@ -29,14 +22,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Menu {
+public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @NotBlank(message = "메뉴 이름은 필수입니다.")
     private String name;
 
+    @NotNull(message = "가격을 입력해주세요.")
+    @Positive(message = "가격은 0보다 커야 합니다.")
     private Long price;
 
     @Column(columnDefinition = "TEXT")
@@ -58,14 +54,11 @@ public class Menu {
     private String updatedBy;
     private String deletedBy;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date updatedAt;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private java.util.Date deletedAt;
-
-
+    // Soft Delete 메서드 수정
+    public void markAsDeleted(String deletedBy) {
+        this.setDeleted(true);
+        this.setDeletedAt(LocalDateTime.now());
+        this.deletedBy = deletedBy;
+    }
 }
