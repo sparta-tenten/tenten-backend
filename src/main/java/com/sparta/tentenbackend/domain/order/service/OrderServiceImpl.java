@@ -13,7 +13,9 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.payment.service.PaymentService;
+import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.exception.BadRequestException;
+import com.sparta.tentenbackend.global.exception.UnauthorizedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,9 +67,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateOrderStatus(UUID orderId) {
+    public void updateOrderStatus(UUID orderId, User owner) {
         Order order = orderRepositoryService.getOrderById(orderId);
         OrderStatus status = order.getOrderStatus();
+
+        checkOwner(order, owner);
 
         switch (status) {
             case ORDER_RECEIVED:
@@ -127,5 +131,46 @@ public class OrderServiceImpl implements OrderService {
             order.getMenuOrderList().add(menuOrder);
         }
         order.setTotalPrice(totalPrice);
+    }
+
+
+    @Override
+    @Transactional
+    public void acceptOrder(UUID orderId, User owner) {
+        Order order = orderRepositoryService.getOrderById(orderId);
+
+        if (!order.getStore().getUser().getId().equals(owner.getId())) {
+            throw new UnauthorizedException("가게 주인이 아닙니다!");
+        }
+
+        if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
+            throw new BadRequestException("주문 수락이 가능한 상태가 아닙니다!");
+        }
+
+        order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+    }
+
+    @Override
+    @Transactional
+    public void rejectOrder(UUID orderId, User owner) {
+        Order order = orderRepositoryService.getOrderById(orderId);
+
+        if (!order.getStore().getUser().getId().equals(owner.getId())) {
+            throw new UnauthorizedException("가게 주인이 아닙니다!");
+        }
+
+        if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
+            throw new BadRequestException("주문 거절이 가능한 상태가 아닙니다!");
+        }
+
+        order.setOrderStatus(OrderStatus.REJECTED);
+    }
+
+    // TODO AOP로 빼기
+    @Override
+    public void checkOwner(Order order, User owner) {
+        if (!order.getStore().getUser().getId().equals(owner.getId())) {
+            throw new UnauthorizedException("가게 주인이 아닙니다!");
+        }
     }
 }

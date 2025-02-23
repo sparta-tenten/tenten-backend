@@ -3,15 +3,11 @@ package com.sparta.tentenbackend.domain.order.service;
 import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
 import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
-import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepositoryQuery;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
-import com.sparta.tentenbackend.domain.user.entity.User;
-import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
-import com.sparta.tentenbackend.global.exception.UnauthorizedException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,36 +51,5 @@ public class OrderRepositoryServiceImpl implements OrderRepositoryService {
         Order order = new Order(req, store);
 
         return orderRepository.save(order);
-    }
-
-    @Override
-    @Transactional
-    public void acceptOrder(UUID orderId, User owner) {
-        Order order = getOrderById(orderId);
-
-        if (!order.getStore().getUser().getId().equals(owner.getId())) {
-            throw new UnauthorizedException("가게 주인이 아닙니다!");
-        }
-
-        if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
-            throw new BadRequestException("주문 수락이 가능한 상태가 아닙니다!");
-        }
-
-        order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
-    }
-
-    @Override
-    public void rejectOrder(UUID orderId, User owner) {
-        Order order = getOrderById(orderId);
-
-        if (!order.getStore().getUser().getId().equals(owner.getId())) {
-            throw new UnauthorizedException("가게 주인이 아닙니다!");
-        }
-
-        if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
-            throw new BadRequestException("주문 거절이 가능한 상태가 아닙니다!");
-        }
-
-        order.setOrderStatus(OrderStatus.REJECTED);
     }
 }

@@ -48,8 +48,9 @@ public class OwnerOrderController {
 
     @PatchMapping("/{orderId}")
     @Operation(summary = "주문 상태 변경")
-    public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId) {
-        orderService.updateOrderStatus(orderId);
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        orderService.updateOrderStatus(orderId, userDetails.getUser());
 
         return ResponseEntity.noContent().build();
     }
@@ -58,7 +59,7 @@ public class OwnerOrderController {
     @Operation(summary = "주문 수락하기")
     public ResponseEntity<Void> acceptOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
     UserDetailsImpl userDetails) {
-        orderRepositoryService.acceptOrder(orderId, userDetails.getUser());
+        orderService.acceptOrder(orderId, userDetails.getUser());
 
         return ResponseEntity.noContent().build();
     }
@@ -67,7 +68,7 @@ public class OwnerOrderController {
     @Operation(summary = "주문 거부하기")
     public ResponseEntity<Void> rejectOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
     UserDetailsImpl userDetails) {
-        orderRepositoryService.acceptOrder(orderId, userDetails.getUser());
+        orderService.rejectOrder(orderId, userDetails.getUser());
 
         return ResponseEntity.noContent().build();
     }
