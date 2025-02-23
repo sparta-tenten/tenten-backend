@@ -8,6 +8,7 @@ import com.sparta.tentenbackend.domain.menu.repository.MenuOptionRepository;
 import com.sparta.tentenbackend.domain.menu.repository.MenuRepository;
 import com.sparta.tentenbackend.domain.order.dto.OrderMenuRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
+import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
@@ -69,9 +70,6 @@ public class OrderServiceImpl implements OrderService {
         OrderStatus status = order.getOrderStatus();
 
         switch (status) {
-            case WAITING_ORDER_RECEIVE:
-                order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
-                break;
             case ORDER_RECEIVED:
                 order.setOrderStatus(OrderStatus.COOKING);
                 break;
@@ -79,7 +77,11 @@ public class OrderServiceImpl implements OrderService {
                 order.setOrderStatus(OrderStatus.COOKING_COMPLETED);
                 break;
             case COOKING_COMPLETED:
-                order.setOrderStatus(OrderStatus.DELIVERING);
+                if (order.getDeliveryType().equals(DeliveryType.DELIVERY)) {
+                    order.setOrderStatus(OrderStatus.DELIVERING);
+                } else {
+                    order.setOrderStatus(OrderStatus.PICKED_UP);
+                }
                 break;
             case DELIVERING:
                 order.setOrderStatus(OrderStatus.DELIVERY_COMPLETED);
