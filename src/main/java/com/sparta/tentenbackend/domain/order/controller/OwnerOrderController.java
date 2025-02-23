@@ -7,12 +7,14 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.service.OrderRepositoryService;
 import com.sparta.tentenbackend.domain.order.service.OrderService;
+import com.sparta.tentenbackend.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +50,15 @@ public class OwnerOrderController {
     @Operation(summary = "주문 상태 변경")
     public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId) {
         orderService.updateOrderStatus(orderId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/accept/{orderId}")
+    @Operation(summary = "주문 수락하기")
+    public ResponseEntity<Void> acceptOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
+    UserDetailsImpl userDetails) {
+        orderRepositoryService.acceptOrder(orderId, userDetails.getUser());
 
         return ResponseEntity.noContent().build();
     }
