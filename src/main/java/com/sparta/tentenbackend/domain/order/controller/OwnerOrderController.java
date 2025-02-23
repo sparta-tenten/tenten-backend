@@ -8,7 +8,7 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.service.OrderRepositoryService;
 import com.sparta.tentenbackend.domain.order.service.OrderService;
-import com.sparta.tentenbackend.global.security.UserDetailsImpl;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;

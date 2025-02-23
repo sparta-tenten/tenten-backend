@@ -3,7 +3,7 @@ package com.sparta.tentenbackend.domain.review.controller;
 import com.sparta.tentenbackend.domain.review.dto.OwnerReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.OwnerReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.service.OwnerReviewService;
-import com.sparta.tentenbackend.global.security.UserDetailsImpl;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,27 +19,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/owner/review")
 @RequiredArgsConstructor
 public class OwnerReviewController {
-  private final OwnerReviewService ownerReviewService;
 
-  // 리뷰에 사장님 답글 달기
-  @PostMapping
-  public ResponseEntity<OwnerReviewResponseDto> createOwnerReview(@RequestBody OwnerReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    OwnerReviewResponseDto response = ownerReviewService.addOwnerReview(requestDto, userDetails.getUser());
-    return ResponseEntity.ok(response);
-  }
+    private final OwnerReviewService ownerReviewService;
 
-  // 답글 수정
-  @PutMapping
-  public ResponseEntity<OwnerReviewResponseDto> updateOwnerReview(@RequestBody OwnerReviewRequestDto requestDto) {
-    OwnerReviewResponseDto response = ownerReviewService.modifyOwnerReview(requestDto);
-    return ResponseEntity.ok(response);
-  }
+    // 리뷰에 사장님 답글 달기
+    @PostMapping
+    public ResponseEntity<OwnerReviewResponseDto> createOwnerReview(
+        @RequestBody OwnerReviewRequestDto requestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        OwnerReviewResponseDto response = ownerReviewService.addOwnerReview(requestDto,
+            userDetails.getUser());
+        return ResponseEntity.ok(response);
+    }
 
-  // 답글 삭제
-  @DeleteMapping
-  public ResponseEntity<String> deleteOwnerReview(@RequestParam String ownerReviewId) {
-    ownerReviewService.removeOwnerReview(ownerReviewId);
-    return ResponseEntity.ok("답글 삭제 완료했습니다.");
-  }
+    // 답글 수정
+    @PutMapping
+    public ResponseEntity<OwnerReviewResponseDto> updateOwnerReview(
+        @RequestBody OwnerReviewRequestDto requestDto) {
+        OwnerReviewResponseDto response = ownerReviewService.modifyOwnerReview(requestDto);
+        return ResponseEntity.ok(response);
+    }
+
+    // 답글 삭제
+    @DeleteMapping
+    public ResponseEntity<String> deleteOwnerReview(@RequestParam String ownerReviewId) {
+        ownerReviewService.removeOwnerReview(ownerReviewId);
+        return ResponseEntity.ok("답글 삭제 완료했습니다.");
+    }
 
 }

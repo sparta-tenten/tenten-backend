@@ -10,7 +10,7 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.service.OrderRepositoryService;
 import com.sparta.tentenbackend.domain.order.service.OrderService;
-import com.sparta.tentenbackend.global.security.UserDetailsImpl;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -55,8 +55,8 @@ public class OrderController {
     @PostMapping("/temp")
     @Operation(summary = "임시 주문 생성(결제 대기)")
     public ResponseEntity<TemporaryOrderResponse> createTemporaryOrder(
-        @RequestBody @Valid TemporaryOrderRequest req,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody @Valid TemporaryOrderRequest req) {
         Order order = orderRepositoryService.createTemporaryOrder(req, userDetails.getUser());
         return ResponseEntity.ok(new TemporaryOrderResponse(order));
     }
