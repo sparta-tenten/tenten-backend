@@ -5,6 +5,7 @@ import com.sparta.tentenbackend.domain.delivery_address.dto.DeliveryAddressRespo
 import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.delivery_address.service.DeliveryAddressService;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,43 +32,49 @@ public class DeliveryAddressController {
 
     private final DeliveryAddressService deliveryAddressService;
 
-    // TODO AuthenticationPrincipal 추가
     @PostMapping
     @Operation(summary = "배송지 추가하기")
     public ResponseEntity<DeliveryAddressResponse> addDeliveryAddress(
-        @RequestBody @Valid CreateDeliveryAddressRequest req) {
-        DeliveryAddress deliveryAddress = deliveryAddressService.createDeliveryAddress(req);
+        @RequestBody @Valid CreateDeliveryAddressRequest req,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        DeliveryAddress deliveryAddress = deliveryAddressService.createDeliveryAddress(req,
+            userDetails.getUser());
 
         return ResponseEntity.ok(new DeliveryAddressResponse(deliveryAddress));
     }
 
     @GetMapping
     @Operation(summary = "배송지 목록 조회")
-    public ResponseEntity<Page<DeliveryAddressResponse>> getAllDeliveryAddress(Pageable pageable) {
+    public ResponseEntity<Page<DeliveryAddressResponse>> getAllDeliveryAddress(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        Pageable pageable
+    ) {
         Page<DeliveryAddress> deliveryAddressList = deliveryAddressService.getDeliveryList(
-            pageable);
+            userDetails.getUser(), pageable);
 
         return ResponseEntity.ok(deliveryAddressList.map(DeliveryAddressResponse::new));
     }
 
-    // TODO AuthenticationPrincipal 추가
     @PutMapping
     @Operation(summary = "배송지 수정")
     public ResponseEntity<DeliveryAddressResponse> updateDeliveryAddress(
-        @RequestBody @Valid UpdateDeliveryAddressRequest req
+        @RequestBody @Valid UpdateDeliveryAddressRequest req,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        DeliveryAddress deliveryAddress = deliveryAddressService.updateDeliveryAddress(req);
+        DeliveryAddress deliveryAddress = deliveryAddressService.updateDeliveryAddress(req,
+            userDetails.getUser());
 
         return ResponseEntity.ok(new DeliveryAddressResponse(deliveryAddress));
     }
 
-    // TODO AuthenticationPrincipal 추가
     @DeleteMapping("/{id}")
     @Operation(summary = "배송지 삭제")
     public ResponseEntity<String> deleteDeliveryAddress(
-        @PathVariable UUID id
+        @PathVariable UUID id,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        deliveryAddressService.deleteDeliveryAddressById(id);
+        deliveryAddressService.deleteDeliveryAddressById(id, userDetails.getUser());
 
         return ResponseEntity.ok("배송지 삭제에 성공하였습니다.");
     }

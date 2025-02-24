@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DeliveryAddressRepository extends JpaRepository<DeliveryAddress, UUID> {
 
-    Page<DeliveryAddress> findAll(Pageable pageable);
+    Page<DeliveryAddress> findAllByUserId(Long userId, Pageable pageable);
 
     default DeliveryAddress findDeliveryAddressById(UUID id) {
         return findById(id).orElseThrow(

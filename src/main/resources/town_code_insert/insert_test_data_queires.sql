@@ -1,5 +1,3 @@
-BEGIN TRANSACTION;
-
 INSERT INTO p_user (user_name, password, email, role, address, detail_address, phone_number,
                     town_code)
 VALUES ('customer01', 'Password@123', 'customer01@example.com', 'CUSTOMER', '서울특별시 종로구',
@@ -58,4 +56,3 @@ VALUES ('123e4567-e89b-12d3-a456-426614174000', '사이드 메뉴', 3000,
        ('123e4567-e89b-12d3-a456-426614174003', '핫소스', 300, '550e8400-e29b-41d4-a716-446655440101',
         'admin', 'admin', NOW());
 
-COMMIT;
