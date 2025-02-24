@@ -39,26 +39,19 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<?> signup(SignupRequestDto requestDto) {
-        String username = requestDto.getUserName();
+        String email = requestDto.getEmail();
         String password = bCryptPasswordEncoder.encode(requestDto.getPassword());
 
-        // 회원 중복 확인
-        Optional<User> checkUsername = userRepository.findByUserName(username);
-        if (checkUsername.isPresent()) {
-            if (checkUsername.get().isDeleted()) {
-                throw new IllegalArgumentException("이미 삭제된 계정입니다.");
-            }
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
-        }
-
-        // email 중복확인
-        String email = requestDto.getEmail();
+        // email 확인
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
+            if (checkEmail.get().isDeleted()) {
+                throw new IllegalArgumentException("이미 삭제된 계정입니다.");
+            }
             throw new IllegalArgumentException("중복된 Email 입니다.");
         }
 
-//         법정동 코드 확인
+        // 법정동 코드 확인
         Town town = townRepository.findByCode(requestDto.getTownCode())
             .orElseThrow(() -> new IllegalArgumentException("잘못된 법정동 코드입니다."));
 
@@ -80,7 +73,8 @@ public class UserService {
 
         // 유저 등록
         User user = new User(requestDto.getUserName(), password, requestDto.getEmail(), role,
-            requestDto.getAddress(), requestDto.getDetailAddress(), requestDto.getPhoneNumber(),town);
+            requestDto.getAddress(), requestDto.getDetailAddress(), requestDto.getPhoneNumber(),
+            town);
 
         userRepository.save(user);
 
@@ -89,22 +83,21 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<?> deleteUser(UserDetailsImpl userDetails) {
-        User user = userRepository.findByUserNameAndIsDeletedFalse(userDetails.getUsername())
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findByEmailAndIsDeletedFalse(userDetails.getUsername())
+            .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        user.deleteUser(); // Soft Delete 적용
+        user.deleteUser();
 
         return ResponseEntity.ok("회원이 삭제되었습니다.");
     }
 
-
     @Transactional
     public ResponseEntity<String> login(LoginRequestDto requestDto, HttpServletResponse res) {
-        String username = requestDto.getUserName();
+        String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
         // 사용자 확인
-        User user = userRepository.findByUserNameAndIsDeletedFalse(username).orElseThrow(
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(
             () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 
@@ -114,7 +107,7 @@ public class UserService {
         }
 
         // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
-        String token = jwtUtil.createToken(user.getUserName(), user.getRole());
+        String token = jwtUtil.createToken(user.getEmail(), user.getRole());
         jwtUtil.addJwtToHeader(token, res);
 
         return ResponseEntity.ok("로그인에 성공했습니다.");
@@ -125,22 +118,23 @@ public class UserService {
     public UserUpdateResponse updateUser(UserUpdateRequestDto requestDto,
         UserDetailsImpl userDetails) {
 
-        String username = userDetails.getUsername();
+        String email = userDetails.getUsername();
         String password = bCryptPasswordEncoder.encode(requestDto.getPassword());
         // 사용자 확인
-        User user = userRepository.findByUserNameAndIsDeletedFalse(username).orElseThrow(
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(
             () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
+
 
         Town town = townRepository.findByCode(requestDto.getTownCode())
             .orElseThrow(() -> new IllegalArgumentException("잘못된 법정동 코드입니다."));
 
-
-        user.userUpdate(password, requestDto.getEmail(), requestDto.getAddress(),
-            requestDto.getDetailAddress(), requestDto.getPhoneNumber());
+        user.userUpdate(requestDto.getUserName(),password, requestDto.getAddress(),
+            requestDto.getDetailAddress(), requestDto.getPhoneNumber(),town);
         userRepository.save(user);
-        return new UserUpdateResponse(username, requestDto.getEmail(), requestDto.getAddress(),
-            requestDto.getDetailAddress(), requestDto.getDetailAddress());
+
+        return new UserUpdateResponse(requestDto.getUserName(), email, requestDto.getAddress(),
+            requestDto.getDetailAddress(), requestDto.getDetailAddress(),town);
     }
 
 }
