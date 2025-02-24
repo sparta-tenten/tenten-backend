@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public interface OrderService {
 
-    Order orderForCustomer(OrderRequest req);
+    Order orderForCustomer(OrderRequest req, User user);
 
-    void cancelOrder(UUID orderId);
+    void cancelOrder(UUID orderId, User user);
 
     void updateOrderStatus(UUID orderId, User owner);
 
@@ -22,4 +22,6 @@ public interface OrderService {
     Order deliveryOrderForOwner(OrderRequest req, User owner);
 
     Order pickupOrderForOwner(OrderRequest req, User owner);
+
+    void cancelOrderForOwner(UUID orderId, User owner);
 }

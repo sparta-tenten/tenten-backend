@@ -65,26 +65,29 @@ public class OrderController {
 
     @DeleteMapping("/temp/{orderId}")
     @Operation(summary = "임시 주문 삭제(결제 대기)")
-    public ResponseEntity<TemporaryOrderResponse> deleteTemporaryOrder(
+    public ResponseEntity<Void> deleteTemporaryOrder(
         @PathVariable UUID orderId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Order order = orderRepositoryService.createTemporaryOrder(req, userDetails.getUser());
-        return ResponseEntity.ok(new TemporaryOrderResponse(order));
+        orderRepositoryService.deleteTemporaryOrder(orderId, userDetails.getUser());
+        return ResponseEntity.noContent().build();
     }
 
 
-    // TODO AuthenticationPrincipal 추가
     @PostMapping
     @Operation(summary = "주문하가")
-    public ResponseEntity<OrderResponse> orderForCustomer(@RequestBody @Valid OrderRequest req) {
-        return ResponseEntity.ok(new OrderResponse(orderService.orderForCustomer(req)));
+    public ResponseEntity<OrderResponse> orderForCustomer(
+        @RequestBody @Valid OrderRequest req,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(
+            new OrderResponse(orderService.orderForCustomer(req, userDetails.getUser())));
     }
 
-    // TODO AuthenticationPrincipal 추가
     @PostMapping("/cancel/{orderId}")
     @Operation(summary = "주문 취소하기")
-    public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId) {
-        orderService.cancelOrder(orderId);
+    public ResponseEntity<Void> cancelOrder(
+        @PathVariable UUID orderId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        orderService.cancelOrder(orderId, userDetails.getUser());
         return ResponseEntity.noContent().build();
     }
 }

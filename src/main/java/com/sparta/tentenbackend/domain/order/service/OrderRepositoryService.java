@@ -13,7 +13,8 @@ public interface OrderRepositoryService {
 
     Order getOrderById(UUID orderId);
 
-    Page<Order> getOrderListByStoreId(UUID storeId, OrderSearchRequest orderSearchRequest);
+    Page<Order> getOrderListByStoreId(UUID storeId, OrderSearchRequest orderSearchRequest,
+        User owner);
 
     Order createTemporaryOrder(TemporaryOrderRequest req, User user);
 

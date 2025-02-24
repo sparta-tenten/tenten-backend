@@ -49,7 +49,7 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
         DeliveryAddress deliveryAddress = getDeliveryAddressById(req.getId());
 
         if (!deliveryAddress.getUser().getId().equals(user.getId())) {
-            throw new BadRequestException("잚못된 요청입니다!");
+            throw new BadRequestException();
         }
 
         Town town = townService.getTownByCode(req.getTownCode());
@@ -65,7 +65,7 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
         if (deliveryAddress.isDeleted() ||
             !deliveryAddress.getUser().getId().equals(user.getId())) {
-            throw new BadRequestException("잘못된 요청입니다!");
+            throw new BadRequestException();
         }
 
         deliveryAddress.setDeleted(true);

@@ -20,6 +20,7 @@ import com.sparta.tentenbackend.domain.store.service.StoreService;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.UnauthorizedException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,15 +44,19 @@ public class OrderServiceImpl implements OrderService {
     private final StoreService storeService;
     private final PaymentRepository paymentRepository;
 
-    // TODO User(주문한 사람) 추가
     @Override
     @Transactional
-    public Order orderForCustomer(OrderRequest req) {
+    public Order orderForCustomer(OrderRequest req, User user) {
         if (!paymentService.isPaymentCompleted(req.getOrderId())) {
             throw new BadRequestException("결제가 완료 되지 않은 주문입니다.");
         }
 
         Order order = orderRepositoryService.getOrderById(req.getOrderId());
+
+        if (!order.getUser().getId().equals(user.getId()) ||
+            order.getStore().getId().equals(req.getStoreId())) {
+            throw new BadRequestException();
+        }
 
         setDeliveryInfo(req, order);
         order.setRequest(req.getRequest());
@@ -63,12 +68,36 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void cancelOrder(UUID orderId) {
+    public void cancelOrder(UUID orderId, User user) {
         Order order = orderRepositoryService.getOrderById(orderId);
-        // TODO 유저 검증 로직 추가
-        // TODO 유저가 CUSTOMER라면 주문 접수 대기중일때만 취소 가능하도록 && 주문 생성 후 5분 이내에만 취소 가능하도록
-        // TODO cancel()에 파라미터로 User 추가
-//        order.cancel();
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("유저 정보가 일치하지 않습니다!");
+        }
+
+        if (order.getOrderStatus() != OrderStatus.WAITING_ORDER_RECEIVE ||
+            LocalDateTime.now().isAfter(order.getCreatedAt().plusMinutes(5))) {
+            throw new BadRequestException("주문 접수 대기 중이거나 주문 생성 후 5분 전에 취소할 수 있습니다!");
+        }
+
+        order.cancel(user);
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrderForOwner(UUID orderId, User owner) {
+        Order order = orderRepositoryService.getOrderById(orderId);
+
+        if (!order.getUser().getId().equals(owner.getId())) {
+            throw new BadRequestException("소유 가게의 주문이 아닙니다!");
+        }
+
+        if (order.getOrderStatus().equals(OrderStatus.DELIVERY_COMPLETED) ||
+            order.getOrderStatus().equals(OrderStatus.PICKED_UP)) {
+            throw new BadRequestException("주문 취소 가능한 상태가 아닙니다!");
+        }
+
+        order.cancel(owner);
     }
 
     @Override
@@ -115,6 +144,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+        order.accept();
     }
 
     @Override
@@ -161,6 +191,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Order pickupOrderForOwner(OrderRequest req, User owner) {
         Store store = storeService.getStoreById(req.getStoreId());
         Order order = new Order(DeliveryType.DELIVERY, store);
