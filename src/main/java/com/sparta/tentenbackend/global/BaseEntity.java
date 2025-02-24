@@ -40,7 +40,7 @@ public abstract class BaseEntity {
     private String deletedBy;
 
     @PreUpdate
-    public void setDeleteBy() {
+    public void setDeleted() {
         if (isDeleted) {
             deletedAt = LocalDateTime.now();
 
@@ -55,6 +55,7 @@ public abstract class BaseEntity {
 
             if (principal instanceof UserDetails) {
                 deletedBy = ((UserDetails) principal).getUsername();
+                return;
             }
 
             deletedBy = "UNKNOWN";

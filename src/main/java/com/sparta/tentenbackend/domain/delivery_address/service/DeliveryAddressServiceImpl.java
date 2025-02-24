@@ -6,6 +6,8 @@ import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.delivery_address.repository.DeliveryAddressRepository;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.region.service.TownService;
+import com.sparta.tentenbackend.domain.user.entity.User;
+import com.sparta.tentenbackend.global.exception.BadRequestException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,20 +22,19 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
     private final DeliveryAddressRepository deliveryAddressRepository;
     private final TownService townService;
 
-    // TODO 유저 추가
     @Override
     @Transactional
-    public DeliveryAddress createDeliveryAddress(CreateDeliveryAddressRequest req) {
+    public DeliveryAddress createDeliveryAddress(CreateDeliveryAddressRequest req, User user) {
         Town town = townService.getTownByCode(req.getTownCode());
-        DeliveryAddress deliveryAddress = new DeliveryAddress(req, town);
+        DeliveryAddress deliveryAddress = new DeliveryAddress(req, town, user);
 
         return deliveryAddressRepository.save(deliveryAddress);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DeliveryAddress> getDeliveryList(Pageable pageable) {
-        return deliveryAddressRepository.findAll(pageable);
+    public Page<DeliveryAddress> getDeliveryList(User user, Pageable pageable) {
+        return deliveryAddressRepository.findAllByUserId(user.getId(), pageable);
     }
 
     @Override
@@ -44,9 +45,13 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
     @Override
     @Transactional
-    public DeliveryAddress updateDeliveryAddress(UpdateDeliveryAddressRequest req) {
+    public DeliveryAddress updateDeliveryAddress(UpdateDeliveryAddressRequest req, User user) {
         DeliveryAddress deliveryAddress = getDeliveryAddressById(req.getId());
-        // TODO 유저 검증 로직 추가
+
+        if (!deliveryAddress.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("잚못된 요청입니다!");
+        }
+
         Town town = townService.getTownByCode(req.getTownCode());
         deliveryAddress.update(req, town);
 
@@ -55,10 +60,13 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
     @Override
     @Transactional
-    public void deleteDeliveryAddressById(UUID id) {
+    public void deleteDeliveryAddressById(UUID id, User user) {
         DeliveryAddress deliveryAddress = getDeliveryAddressById(id);
 
-        // TODO 유저 검증 로직 추가
+        if (deliveryAddress.isDeleted() ||
+            !deliveryAddress.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("잘못된 요청입니다!");
+        }
 
         deliveryAddress.setDeleted(true);
     }
