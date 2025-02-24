@@ -32,19 +32,18 @@ public class OwnerReviewController {
         return ResponseEntity.ok(response);
     }
 
-    // 답글 수정
-    @PutMapping
-    public ResponseEntity<OwnerReviewResponseDto> updateOwnerReview(
-        @RequestBody OwnerReviewRequestDto requestDto) {
-        OwnerReviewResponseDto response = ownerReviewService.modifyOwnerReview(requestDto);
-        return ResponseEntity.ok(response);
-    }
+  // 답글 수정
+  @PutMapping
+  public ResponseEntity<OwnerReviewResponseDto> updateOwnerReview(@RequestBody OwnerReviewRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    OwnerReviewResponseDto response = ownerReviewService.modifyOwnerReview(requestDto, userDetails.getUser());
+    return ResponseEntity.ok(response);
+  }
 
-    // 답글 삭제
-    @DeleteMapping
-    public ResponseEntity<String> deleteOwnerReview(@RequestParam String ownerReviewId) {
-        ownerReviewService.removeOwnerReview(ownerReviewId);
-        return ResponseEntity.ok("답글 삭제 완료했습니다.");
-    }
+  // 답글 삭제
+  @DeleteMapping
+  public ResponseEntity<String> deleteOwnerReview(@RequestParam String ownerReviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    ownerReviewService.removeOwnerReview(ownerReviewId, userDetails.getUser());
+    return ResponseEntity.ok("답글 삭제 완료했습니다.");
+  }
 
 }

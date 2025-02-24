@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             return getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    requestDto.getUserName(),
+                    requestDto.getEmail(),
                     requestDto.getPassword(),
                     null
                 )
@@ -51,10 +51,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         HttpServletResponse response, FilterChain chain, Authentication authResult)
         throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
-        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        String  email = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
-        String token = jwtUtil.createToken(username, role);
+        String token = jwtUtil.createToken(email, role);
 
         jwtUtil.addJwtToHeader(token, response);
 

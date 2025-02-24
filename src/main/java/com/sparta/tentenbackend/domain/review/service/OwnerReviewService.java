@@ -8,7 +8,7 @@ public interface OwnerReviewService {
 
   OwnerReviewResponseDto addOwnerReview(OwnerReviewRequestDto requestDto, User user);
 
-  OwnerReviewResponseDto modifyOwnerReview(OwnerReviewRequestDto requestDto);
+  OwnerReviewResponseDto modifyOwnerReview(OwnerReviewRequestDto requestDto, User user);
 
-  void removeOwnerReview(String ownerReviewId);
+  void removeOwnerReview(String ownerReviewId, User user);
 }

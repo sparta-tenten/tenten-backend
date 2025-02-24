@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.user.dto;
 
+import com.sparta.tentenbackend.domain.region.entity.Town;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class UserUpdateResponse {
     private String address;
     private String detailAddress;
     private String phoneNumber;
+    private Town town;
 
 }
 
