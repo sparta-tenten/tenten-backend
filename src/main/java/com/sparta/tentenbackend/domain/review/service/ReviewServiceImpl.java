@@ -92,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
   public Page<ReviewResponseDto> findAllReviews(User user, int page, int size, String sortBy, boolean isAsc) {
     Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
     Sort sort = getSortByField(sortBy, direction);
-    Pageable pageable = PageRequest.of(page, size, sort);
+    Pageable pageable = PageRequest.of(page, getValidPageSize(size), sort);
 
     // review 테이블에 저장된 order로 order.getUser().getId() == user.getId() 인 리뷰 목록/isDeleted=false만 조회하기
     Page<Review> reviews = reviewRepository.findAllByOrder_User_IdAndIsDeletedFalse(user.getId(), pageable);
