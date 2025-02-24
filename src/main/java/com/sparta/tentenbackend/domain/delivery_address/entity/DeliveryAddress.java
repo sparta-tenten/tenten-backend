@@ -2,7 +2,6 @@ package com.sparta.tentenbackend.domain.delivery_address.entity;
 
 import com.sparta.tentenbackend.domain.delivery_address.dto.CreateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddressRequest;
-import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.BaseEntity;
@@ -23,6 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "p_delivery_address")
+//@SQLRestriction("is_deleted is false")
 public class DeliveryAddress extends BaseEntity {
 
     @Id
@@ -48,12 +48,12 @@ public class DeliveryAddress extends BaseEntity {
     @JoinColumn(name = "town_code", nullable = false)
     private Town town;
 
-    // TODO 유저 추가
-    public DeliveryAddress(CreateDeliveryAddressRequest req, Town town) {
+    public DeliveryAddress(CreateDeliveryAddressRequest req, Town town, User user) {
         this.name = req.getName();
         this.address = req.getAddress();
         this.detailAddress = req.getDetailAddress();
         this.town = town;
+        this.user = user;
     }
 
     public void update(UpdateDeliveryAddressRequest req, Town town) {

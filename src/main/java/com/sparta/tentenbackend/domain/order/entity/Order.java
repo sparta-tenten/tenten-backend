@@ -78,7 +78,10 @@ public class Order extends BaseEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime cancelledAt;
-    private Long cancelledBy;
+    private String cancelledBy;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime acceptedAt;
 
     public Order(Long totalPrice, DeliveryType deliveryType, OrderType orderType,
         OrderStatus orderStatus) {
@@ -122,9 +125,14 @@ public class Order extends BaseEntity {
         this.user = user;
     }
 
-    public void cancel(Long cancelUserId) {
+    public void cancel(User user) {
         this.orderStatus = OrderStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
-        this.cancelledBy = cancelUserId;
+        this.cancelledBy = user.getEmail();
+    }
+
+    public void accept() {
+        this.orderStatus = OrderStatus.ORDER_RECEIVED;
+        this.acceptedAt = LocalDateTime.now();
     }
 }

@@ -1,8 +1,10 @@
 package com.sparta.tentenbackend.domain.user.service;
 
 
+import com.sparta.tentenbackend.domain.jwt.JwtUtil;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.region.repository.TownRepository;
+import com.sparta.tentenbackend.domain.user.dto.LoginRequestDto;
 import com.sparta.tentenbackend.domain.user.dto.SignupRequestDto;
 import com.sparta.tentenbackend.domain.user.dto.UserUpdateRequestDto;
 import com.sparta.tentenbackend.domain.user.dto.UserUpdateResponse;
@@ -10,13 +12,6 @@ import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import com.sparta.tentenbackend.domain.user.repository.UserRepository;
 import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
-import java.util.Optional;
-import com.sparta.tentenbackend.domain.jwt.JwtUtil;
-import com.sparta.tentenbackend.domain.user.dto.LoginRequestDto;
-import com.sparta.tentenbackend.domain.user.dto.SignupRequestDto;
-import com.sparta.tentenbackend.domain.user.entity.User;
-import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
-import com.sparta.tentenbackend.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -125,16 +120,15 @@ public class UserService {
             () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 
-
         Town town = townRepository.findByCode(requestDto.getTownCode())
             .orElseThrow(() -> new IllegalArgumentException("잘못된 법정동 코드입니다."));
 
-        user.userUpdate(requestDto.getUserName(),password, requestDto.getAddress(),
-            requestDto.getDetailAddress(), requestDto.getPhoneNumber(),town);
+        user.userUpdate(requestDto.getUserName(), password, requestDto.getAddress(),
+            requestDto.getDetailAddress(), requestDto.getPhoneNumber(), town);
         userRepository.save(user);
 
         return new UserUpdateResponse(requestDto.getUserName(), email, requestDto.getAddress(),
-            requestDto.getDetailAddress(), requestDto.getDetailAddress(),town);
+            requestDto.getDetailAddress(), requestDto.getDetailAddress(), town);
     }
 
 }

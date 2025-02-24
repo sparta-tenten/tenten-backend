@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.order.controller;
 
+import com.sparta.tentenbackend.domain.order.annotation.CheckOrderOwner;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderResponse;
 import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
@@ -34,7 +35,6 @@ public class OwnerOrderController {
     private final OrderService orderService;
     private final OrderRepositoryService orderRepositoryService;
 
-    // TODO AuthenticationPrincipal 추가
     @GetMapping("/{storeId}")
     @Operation(summary = "사장님 가게 주문 내역 조회하기")
     public ResponseEntity<Page<OrderResponse>> getOrderList(
@@ -43,35 +43,37 @@ public class OwnerOrderController {
         @RequestParam(required = false) OrderStatus orderStatus,
         @RequestParam(required = false) String keyword,
         @RequestParam(defaultValue = "0", required = false) int page,
-        @RequestParam(defaultValue = "9", required = false) int size) {
+        @RequestParam(defaultValue = "9", required = false) int size,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Page<Order> orderList = orderRepositoryService.getOrderListByStoreId(storeId,
-            new OrderSearchRequest(deliveryType, orderStatus, keyword, page, size));
+            new OrderSearchRequest(deliveryType, orderStatus, keyword, page, size),
+            userDetails.getUser());
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
     }
 
     @PatchMapping("/{orderId}")
     @Operation(summary = "주문 상태 변경")
-    public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        orderService.updateOrderStatus(orderId, userDetails.getUser());
+    @CheckOrderOwner
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId) {
+        orderService.updateOrderStatus(orderId);
 
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/accept/{orderId}")
     @Operation(summary = "주문 수락하기")
-    public ResponseEntity<Void> acceptOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
-    UserDetailsImpl userDetails) {
-        orderService.acceptOrder(orderId, userDetails.getUser());
+    @CheckOrderOwner
+    public ResponseEntity<Void> acceptOrder(@PathVariable UUID orderId) {
+        orderService.acceptOrder(orderId);
 
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/reject/{orderId}")
     @Operation(summary = "주문 거부하기")
-    public ResponseEntity<Void> rejectOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
-    UserDetailsImpl userDetails) {
-        orderService.rejectOrder(orderId, userDetails.getUser());
+    @CheckOrderOwner
+    public ResponseEntity<Void> rejectOrder(@PathVariable UUID orderId) {
+        orderService.rejectOrder(orderId);
 
         return ResponseEntity.noContent().build();
     }
@@ -94,10 +96,12 @@ public class OwnerOrderController {
         return ResponseEntity.ok(new OrderResponse(order));
     }
 
-//    @PostMapping("/cancel/{orderId}")
-//    @Operation(summary = "사장님 주문 취소하기")
-//    public ResponseEntity<Void> cancelOrder(@PathVariable ValidUUID orderId) {
-//        orderService.cancelOrder(orderId);
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("/cancel/{orderId}")
+    @Operation(summary = "사장님 주문 취소하기")
+    @CheckOrderOwner
+    public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        orderService.cancelOrderForOwner(orderId, userDetails.getUser());
+        return ResponseEntity.ok().build();
+    }
 }

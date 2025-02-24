@@ -1,6 +1,7 @@
 package com.sparta.tentenbackend.domain.payment.service;
 
 import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.service.OrderRepositoryService;
 import com.sparta.tentenbackend.domain.payment.dto.PaymentRequest;
 import com.sparta.tentenbackend.domain.payment.entity.Payment;
@@ -23,6 +24,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public Payment createPayment(PaymentRequest paymentRequest) {
         Order order = orderRepositoryService.getOrderById(paymentRequest.getOrderId());
+        order.setOrderStatus(OrderStatus.PAYMENT_COMPLETED);
 
         Payment payment = Payment.createCompletedPayment(paymentRequest, order);
         return paymentRepository.save(payment);
