@@ -16,5 +16,5 @@ public interface CategoryService {
   CategoryResponseDto modifyCategory(CategoryRequestDto requestDto, User user);
 
   // 카테고리 삭제
-  void removeCategory(CategoryRequestDto requestDto, User user);
+  void removeCategory(String categoryId, User user);
 }

@@ -70,14 +70,19 @@ public class ReviewController {
   public ResponseEntity<ReviewResponseDto> updateReview(@Valid @RequestPart("review") UpdateReviewRequestDto requestDto,
       @RequestPart(value = "file", required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
     if (file != null) { // 리뷰 이미지 파일이 null이 아닐 경우
-      requestDto = new UpdateReviewRequestDto(requestDto.getId(), requestDto.getContent(), requestDto.getGrade(), file);
+      requestDto = new UpdateReviewRequestDto(requestDto.getId(), requestDto.getContent(),
+          requestDto.getGrade(), file);
+    }
+    ReviewResponseDto response = reviewService.modifyReview(requestDto, userDetails.getUser());
+    return ResponseEntity.ok(response);
+  }
 
     // 리뷰 삭제
     @DeleteMapping
-    public ResponseEntity<String> deleteReview(@RequestParam String reviewId,
+    public ResponseEntity<String> deleteReview(@RequestParam("reviewId") String reviewId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        reviewService.removeReview(reviewId, userDetails.getUser());
-        return ResponseEntity.ok("리뷰 삭제를 완료했습니다.");
+      reviewService.removeReview(reviewId, userDetails.getUser());
+      return ResponseEntity.ok("리뷰 삭제를 완료했습니다.");
     }
 
 }
