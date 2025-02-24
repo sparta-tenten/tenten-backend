@@ -58,7 +58,7 @@ public class ReviewController {
     return ResponseEntity.ok(reviews);
   }
 
-  // 리뷰 검색
+  // 내가 쓴 리뷰 검색
   @GetMapping("/search")
   public ResponseEntity<Page<ReviewResponseDto>> searchReviewsByKeyword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam("searchType") int searchType, @RequestParam("keyword") String keyword, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
     Page<ReviewResponseDto> reviews = reviewService.searchReviewsByKeyword(userDetails.getUser(), searchType, keyword, page - 1, size, sortBy, isAsc);

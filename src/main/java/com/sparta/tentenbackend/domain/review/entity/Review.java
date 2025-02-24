@@ -63,4 +63,12 @@ public class Review extends BaseEntity {
     this.setDeleted(true);
     this.setDeletedAt(LocalDateTime.now());
   }
+
+  public void reWriteReview(String content, int grade, String imageUrl) {
+    this.content = content;
+    this.grade = grade;
+    this.image = imageUrl;
+    this.setDeleted(false);
+    this.setDeletedAt(null);
+  }
 }

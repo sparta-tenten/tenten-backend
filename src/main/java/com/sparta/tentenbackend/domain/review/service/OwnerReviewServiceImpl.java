@@ -23,8 +23,6 @@ public class OwnerReviewServiceImpl implements OwnerReviewService {
   private final ReviewRepository reviewRepository;
 
   // TODO review.getOrder().getStore().getUser().getId() 리팩토링 필요함. > 결합도 too much
-  // TODO user.getRole() == UserRoleEnum.OWNER인 건 WebSecurityConfig에서 확인하도록 설정 필요함.
-
   // 리뷰에 사장님 답글 달기
   @Override
   public OwnerReviewResponseDto addOwnerReview(OwnerReviewRequestDto requestDto, User user) {
