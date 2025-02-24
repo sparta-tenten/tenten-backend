@@ -3,11 +3,13 @@ package com.sparta.tentenbackend.domain.order.service;
 import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
 import com.sparta.tentenbackend.domain.order.dto.TemporaryOrderRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.order.repository.OrderRepositoryQuery;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
 import com.sparta.tentenbackend.domain.user.entity.User;
+import com.sparta.tentenbackend.global.exception.BadRequestException;
 import com.sparta.tentenbackend.global.exception.NotFoundException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +32,9 @@ public class OrderRepositoryServiceImpl implements OrderRepositoryService {
         return orderRepositoryQuery.getOrderListByStoreId(storeId, orderSearchRequest);
     }
 
-    // TODO User 아이디 기준으로 찾기로 수정
     @Override
-    public Page<Order> getOrderList(OrderSearchRequest orderSearchRequest) {
-        return orderRepositoryQuery.getOrderList(orderSearchRequest);
+    public Page<Order> getOrderList(OrderSearchRequest orderSearchRequest, User user) {
+        return orderRepositoryQuery.getOrderList(orderSearchRequest, user);
     }
 
     @Override
@@ -51,5 +52,18 @@ public class OrderRepositoryServiceImpl implements OrderRepositoryService {
         Order order = new Order(req.getDeliveryType(), store);
 
         return orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void deleteTemporaryOrder(UUID orderId, User user) {
+        Order order = getOrderById(orderId);
+
+        if (!order.getOrderStatus().equals(OrderStatus.WAITING_PAYMENT) ||
+            !order.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("잘못된 요청입니다!");
+        }
+
+        orderRepository.deleteById(orderId);
     }
 }

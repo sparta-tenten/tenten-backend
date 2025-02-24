@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,6 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepositoryService orderRepositoryService;
 
-    // TODO AuthenticationPrincipal 추가
     @GetMapping
     @Operation(summary = "주문 내역 조회하기")
     public ResponseEntity<Page<OrderResponse>> getOrderList(
@@ -45,9 +45,11 @@ public class OrderController {
         @RequestParam(required = false) OrderStatus orderStatus,
         @RequestParam(required = false) String keyword,
         @RequestParam(defaultValue = "0", required = false) int page,
-        @RequestParam(defaultValue = "9", required = false) int size) {
+        @RequestParam(defaultValue = "9", required = false) int size,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Page<Order> orderList = orderRepositoryService.getOrderList(
-            new OrderSearchRequest(categoryId, deliveryType, orderStatus, keyword, page, size));
+            new OrderSearchRequest(categoryId, deliveryType, orderStatus, keyword, page, size),
+            userDetails.getUser());
 
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
     }
@@ -57,6 +59,15 @@ public class OrderController {
     public ResponseEntity<TemporaryOrderResponse> createTemporaryOrder(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody @Valid TemporaryOrderRequest req) {
+        Order order = orderRepositoryService.createTemporaryOrder(req, userDetails.getUser());
+        return ResponseEntity.ok(new TemporaryOrderResponse(order));
+    }
+
+    @DeleteMapping("/temp/{orderId}")
+    @Operation(summary = "임시 주문 삭제(결제 대기)")
+    public ResponseEntity<TemporaryOrderResponse> deleteTemporaryOrder(
+        @PathVariable UUID orderId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Order order = orderRepositoryService.createTemporaryOrder(req, userDetails.getUser());
         return ResponseEntity.ok(new TemporaryOrderResponse(order));
     }

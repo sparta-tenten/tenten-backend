@@ -9,6 +9,7 @@ import com.sparta.tentenbackend.domain.order.entity.DeliveryType;
 import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.entity.QOrder;
+import com.sparta.tentenbackend.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public class OrderRepositoryQueryImpl implements OrderRepositoryQuery {
     QMenu menu = QMenu.menu;
 
     @Override
-    public Page<Order> getOrderList(OrderSearchRequest req) {
+    public Page<Order> getOrderList(OrderSearchRequest req, User user) {
         Pageable pageable = PageRequest.of(req.getPage(), req.getSize());
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -40,6 +41,7 @@ public class OrderRepositoryQueryImpl implements OrderRepositoryQuery {
         OrderStatus orderStatus = req.getOrderStatus();
         String keyword = req.getKeyword();
 
+        builder.and(order.user.id.eq(user.getId()));
         if (categoryId != null) {
             builder.and(order.store.category.id.eq(categoryId));
         }

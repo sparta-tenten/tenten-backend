@@ -9,11 +9,13 @@ import org.springframework.data.domain.Page;
 
 public interface OrderRepositoryService {
 
-    Page<Order> getOrderList(OrderSearchRequest orderSearchRequest);
+    Page<Order> getOrderList(OrderSearchRequest orderSearchRequest, User user);
 
     Order getOrderById(UUID orderId);
 
     Page<Order> getOrderListByStoreId(UUID storeId, OrderSearchRequest orderSearchRequest);
 
     Order createTemporaryOrder(TemporaryOrderRequest req, User user);
+
+    void deleteTemporaryOrder(UUID orderId, User user);
 }
