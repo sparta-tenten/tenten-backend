@@ -9,6 +9,7 @@ import com.sparta.tentenbackend.domain.user.entity.UserRoleEnum;
 import com.sparta.tentenbackend.global.exception.ForbiddenException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,8 +62,8 @@ public class CategoryServiceImpl implements CategoryService {
   // 카테고리 삭제
   @Override
   @Transactional
-  public void removeCategory(CategoryRequestDto requestDto, User user) {
-    Category category = categoryRepository.findById(requestDto.getId()).orElseThrow(() ->
+  public void removeCategory(String categoryId, User user) {
+    Category category = categoryRepository.findById(UUID.fromString(categoryId)).orElseThrow(() ->
         new NullPointerException("해당 카테고리는 존재하지 않습니다."));
     if (user.getRole() == UserRoleEnum.MASTER) {
       category.markAsDeleted(); // 카테고리의 isDeleted true

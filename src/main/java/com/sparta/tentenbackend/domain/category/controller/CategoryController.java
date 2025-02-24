@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -52,9 +53,9 @@ public class CategoryController {
 
     // 카테고리 삭제
     @DeleteMapping("/master/category")
-    public ResponseEntity<String> deleteCategory(@RequestBody CategoryRequestDto requestDto,
+    public ResponseEntity<String> deleteCategory(@RequestParam("categoryId") String categoryId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        categoryService.removeCategory(requestDto, userDetails.getUser());
+        categoryService.removeCategory(categoryId, userDetails.getUser());
         return ResponseEntity.ok("카테고리 삭제를 완료했습니다.");
     }
 }

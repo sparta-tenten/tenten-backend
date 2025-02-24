@@ -101,6 +101,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
   }
 
+  // 리뷰 검색
   @Override
   public Page<ReviewResponseDto> searchReviewsByKeyword(User user, int searchType, String keyword, int page, int size, String sortBy, boolean isAsc) {
     Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
