@@ -39,6 +39,7 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
+
     // 가게별 메뉴 목록 조회
     @Transactional
     public List<MenuDto> getMenusByStore(UUID storeId) {
