@@ -24,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Transactional
   public CategoryResponseDto addCategory(CategoryRequestDto requestDto, User user) {
     Category category = categoryRepository.save(new Category(requestDto));
-      return new CategoryResponseDto(category);
+    return new CategoryResponseDto(category);
   }
 
   // 카테고리 목록 조회

@@ -4,12 +4,14 @@ import com.sparta.tentenbackend.domain.order.entity.Order;
 import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.global.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -42,7 +44,7 @@ public class Review extends BaseEntity {
   @Column
   private String image;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "order_id")
   private Order order;
 
@@ -62,13 +64,5 @@ public class Review extends BaseEntity {
   public void markAsDeleted() {
     this.setDeleted(true);
     this.setDeletedAt(LocalDateTime.now());
-  }
-
-  public void reWriteReview(String content, int grade, String imageUrl) {
-    this.content = content;
-    this.grade = grade;
-    this.image = imageUrl;
-    this.setDeleted(false);
-    this.setDeletedAt(null);
   }
 }

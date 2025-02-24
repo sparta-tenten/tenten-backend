@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OwnerReviewRepository extends JpaRepository<OwnerReview, UUID> {
 
+  OwnerReview findByReview_Id(UUID id);
 }

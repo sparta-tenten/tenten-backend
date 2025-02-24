@@ -6,7 +6,9 @@ import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.entity.OwnerReview;
 import com.sparta.tentenbackend.domain.review.entity.Review;
+import com.sparta.tentenbackend.domain.review.repository.OwnerReviewRepository;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.repository.StoreRepository;
@@ -33,6 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
   private final ReviewRepository reviewRepository;
   private final OrderRepository orderRepository;
   private final StoreRepository storeRepository;
+  private final OwnerReviewRepository ownerReviewRepository;
   private final S3Service s3Service;
 
   // TODO 주문 API 완성되면 주석 없얘고 테스트해보기
@@ -55,39 +58,22 @@ public class ReviewServiceImpl implements ReviewService {
     if (order.getOrderStatus() != OrderStatus.DELIVERY_COMPLETED) {
       throw new BadRequestException("리뷰는 배달완료된 주문에 대해서만 작성할 수 있습니다.");
     }
-    // 기존 리뷰가 있는 경우, 삭제된 리뷰인지 확인 후 복구
-    Review existingReview = reviewRepository.findByOrder_Id(orderId);
-    if (existingReview != null) { // 리뷰가 이미 존재한다면
-      if (existingReview.isDeleted()) { // 리뷰가 삭제된 상태라면
-        String imageUrl = null;
-        if (existingReview.getImage() != null && !existingReview.getImage().isEmpty()) {  // 저장된 리뷰 사진이 있다면
-          s3Service.deleteFile(existingReview.getImage());  // 삭제
-        } // 없으면 받은 파일 업로드
-        imageUrl = s3Service.uploadFile(requestDto.getFile());
-        // 리뷰 내용 업데이트
-        existingReview.reWriteReview(requestDto.getContent(), requestDto.getGrade(), imageUrl);
-        updateStoreReviewStats(order, requestDto.getGrade());
-        return new ReviewResponseDto(existingReview);
-      }
-      //
+    // 기존 리뷰가 있는 경우 예외 처리
+    Review existingReview = reviewRepository.findByOrder_IdAndIsDeletedFalse(orderId);
+    if (existingReview != null) {
       throw new BadRequestException("리뷰가 이미 존재합니다.");
-    } else {  // 리뷰를 처음 작성하는 경우
-      // 파일이 존재하면 S3에 파일 업로드
-      String imageUrl = null;
-      if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
-        imageUrl = s3Service.uploadFile(requestDto.getFile());
-      }
-      Review review = reviewRepository.save(new Review(requestDto, imageUrl, order));
-      // 리뷰 생성시 가게 총 평점 합계, 총 리뷰 개수 저장
-      updateStoreReviewStats(order, requestDto.getGrade());
-      return new ReviewResponseDto(review);
     }
-  }
-
-  private void updateStoreReviewStats(Order order, int grade) {
+    // 파일이 존재하면 S3에 파일 업로드
+    String imageUrl = null;
+    if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
+      imageUrl = s3Service.uploadFile(requestDto.getFile());
+    }
+    Review review = reviewRepository.save(new Review(requestDto, imageUrl, order));
+    // 리뷰 생성시 가게 총 평점 합계, 총 리뷰 개수 저장
     Store store = order.getStore();
-    store.updateReviewStats(grade);
+    store.updateReviewStats(review.getGrade());
     storeRepository.save(store);
+    return new ReviewResponseDto(review);
   }
 
   // 모든 사용자가 볼 수 있는 가게별 리뷰 목록 조회
@@ -166,10 +152,11 @@ public class ReviewServiceImpl implements ReviewService {
     int oldGrade = review.getGrade(); // 기존 평점
     // 파일이 존재하면 파일 대체
     String imageUrl = null;
-    if (review.getImage() != null && !review.getImage().isEmpty()) {
-      s3Service.deleteFile(review.getImage());
+    if (review.getImage() == null) {
+      imageUrl = s3Service.uploadFile(requestDto.getFile());
+    } else {
+      imageUrl = s3Service.updateFile(review.getImage(), requestDto.getFile());
     }
-    imageUrl = s3Service.uploadFile(requestDto.getFile());
     // 리뷰 내용 업데이트
     review.updateById(requestDto, imageUrl);
     // 가게 총 평점 합계 업데이트
@@ -190,11 +177,12 @@ public class ReviewServiceImpl implements ReviewService {
       throw new ForbiddenException("해당 리뷰의 작성자가 아닙니다.");
     }
     Store store = review.getOrder().getStore();
-    if (review.getImage() != null && !review.getImage().isEmpty()) {
-      s3Service.deleteFile(review.getImage());
-    }
-    review.markAsDeleted();
-    store.removeReviewStats(review.getGrade());
+    // 저장된 이미지 파일이 있는 경우 이미지 파일 삭제 > soft delete 삭제 안함
+//    if (review.getImage() != null && !review.getImage().isEmpty()) {
+//      s3Service.deleteFile(review.getImage());
+//    }
+    review.markAsDeleted(); // review.isDeleted=true
+    store.removeReviewStats(review.getGrade()); // 가게 평점에서 해당 review 제외
     reviewRepository.save(review);
     storeRepository.save(store);
   }
