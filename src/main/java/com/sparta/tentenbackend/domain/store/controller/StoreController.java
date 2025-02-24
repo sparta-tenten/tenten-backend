@@ -3,7 +3,7 @@ package com.sparta.tentenbackend.domain.store.controller;
 import com.sparta.tentenbackend.domain.store.dto.StoreRequestDto;
 import com.sparta.tentenbackend.domain.store.dto.StoreResponseDto;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
-import com.sparta.tentenbackend.global.security.UserDetailsImpl;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,8 @@ public class StoreController {
         @RequestParam(defaultValue = "createdAt") String sortBy,
         @RequestParam(defaultValue = "false") boolean isAsc
     ) {
-        Page<StoreResponseDto> stores = storeService.searchStores(keyword, categoryId, townCode, page, size, sortBy, isAsc);
+        Page<StoreResponseDto> stores = storeService.searchStores(keyword, categoryId, townCode,
+            page, size, sortBy, isAsc);
         return ResponseEntity.ok(stores);
     }
 

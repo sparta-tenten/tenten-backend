@@ -1,8 +1,8 @@
 package com.sparta.tentenbackend.domain.payment.entity;
 
 import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.payment.dto.PaymentRequest;
 import com.sparta.tentenbackend.global.BaseEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,9 +10,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +24,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "p_payment")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Payment extends BaseEntity {
 
     @Id
@@ -33,11 +39,33 @@ public class Payment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    @OneToOne(mappedBy = "payment", cascade = CascadeType.REMOVE, orphanRemoval = true, optional = false)
+    private LocalDateTime paymentTime;
+    private String buyerName;
+    private String phoneNumber;
+    private PaymentMethod paymentMethod;
+
+    @OneToOne
+    @JoinColumn(name = "order_id", unique = true, nullable = false)
     private Order order;
 
-    public Payment(PaymentStatus paymentStatus, Long amount) {
-        this.paymentStatus = paymentStatus;
-        this.amount = amount;
+    public static Payment createCompletedPayment(PaymentRequest req, Order order) {
+        return Payment.builder()
+            .amount(req.getAmount())
+            .buyerName(req.getBuyerName())
+            .phoneNumber(req.getPhoneNumber())
+            .paymentMethod(req.getPaymentMethod())
+            .paymentTime(LocalDateTime.now())
+            .order(order)
+            .paymentStatus(PaymentStatus.COMPLETED)
+            .build();
+    }
+
+    public static Payment createWaitingPayment(Long amount, Order order) {
+        return Payment.builder()
+            .amount(amount)
+            .paymentMethod(PaymentMethod.CARD)
+            .order(order)
+            .paymentStatus(PaymentStatus.WAITING)
+            .build();
     }
 }

@@ -1,11 +1,10 @@
 package com.sparta.tentenbackend.domain.menu.repository;
 
 import com.sparta.tentenbackend.domain.menu.entity.Menu;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, UUID> {

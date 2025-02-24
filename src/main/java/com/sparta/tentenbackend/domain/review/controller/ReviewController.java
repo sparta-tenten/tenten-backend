@@ -4,7 +4,7 @@ import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.service.ReviewService;
-import com.sparta.tentenbackend.global.security.UserDetailsImpl;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -27,18 +27,22 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/review")
 @RequiredArgsConstructor
 public class ReviewController {
-  private final ReviewService reviewService;
 
-  // 리뷰 만들기
-  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<ReviewResponseDto> createReview(@Valid @RequestPart("review") CreateReviewRequestDto requestDto,
-      @RequestPart(value = "file", required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-    if (file != null) { // 리뷰 이미지 파일이 null이 아닐 경우
-      requestDto = new CreateReviewRequestDto(requestDto.getContent(), requestDto.getGrade(), requestDto.getOrderId(), file);
+    private final ReviewService reviewService;
+
+    // 리뷰 만들기
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ReviewResponseDto> createReview(
+        @Valid @RequestPart("review") CreateReviewRequestDto requestDto,
+        @RequestPart(value = "file", required = false) MultipartFile file,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        if (file != null) { // 리뷰 이미지 파일이 null이 아닐 경우
+            requestDto = new CreateReviewRequestDto(requestDto.getContent(), requestDto.getGrade(),
+                requestDto.getOrderId(), file);
+        }
+        ReviewResponseDto response = reviewService.addReview(requestDto, userDetails.getUser());
+        return ResponseEntity.ok(response);
     }
-    ReviewResponseDto response = reviewService.addReview(requestDto, userDetails.getUser());
-    return ResponseEntity.ok(response);
-  }
 
   // 가게별 리뷰 목록 조회
   @GetMapping
@@ -67,17 +71,14 @@ public class ReviewController {
       @RequestPart(value = "file", required = false) MultipartFile file, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
     if (file != null) { // 리뷰 이미지 파일이 null이 아닐 경우
       requestDto = new UpdateReviewRequestDto(requestDto.getId(), requestDto.getContent(), requestDto.getGrade(), file);
-    }
-    ReviewResponseDto response = reviewService.modifyReview(requestDto, userDetails.getUser());
-    return ResponseEntity.ok(response);
-  }
 
-  // 리뷰 삭제
-  @DeleteMapping
-  public ResponseEntity<String> deleteReview(@RequestParam String reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    reviewService.removeReview(reviewId, userDetails.getUser());
-    return ResponseEntity.ok("리뷰 삭제를 완료했습니다.");
-  }
+    // 리뷰 삭제
+    @DeleteMapping
+    public ResponseEntity<String> deleteReview(@RequestParam String reviewId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        reviewService.removeReview(reviewId, userDetails.getUser());
+        return ResponseEntity.ok("리뷰 삭제를 완료했습니다.");
+    }
 
 }
 

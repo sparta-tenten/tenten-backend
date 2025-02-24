@@ -1,22 +1,25 @@
 package com.sparta.tentenbackend.domain.order.service;
 
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
-import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
 import com.sparta.tentenbackend.domain.order.entity.Order;
+import com.sparta.tentenbackend.domain.user.entity.User;
 import java.util.UUID;
-import org.springframework.data.domain.Page;
 
 public interface OrderService {
 
-    Page<Order> getOrderList(OrderSearchRequest orderSearchRequest);
-
-    Order createOrder(OrderRequest req);
+    Order orderForCustomer(OrderRequest req);
 
     void cancelOrder(UUID orderId);
 
-    Order getOrderById(UUID orderId);
+    void updateOrderStatus(UUID orderId, User owner);
 
-    Page<Order> getOrderListByStoreId(UUID storeId, OrderSearchRequest orderSearchRequest);
+    void acceptOrder(UUID orderId, User owner);
 
-    void updateOrderStatus(UUID orderId);
+    void rejectOrder(UUID orderId, User owner);
+
+    void checkOwner(Order order, User owner);
+
+    Order deliveryOrderForOwner(OrderRequest req, User owner);
+
+    Order pickupOrderForOwner(OrderRequest req, User owner);
 }
