@@ -119,10 +119,6 @@ public class WebSecurityConfig {
             .requestMatchers("/api/ai")
             .hasAuthority(Authority.CUSTOMER)
 
-            // [test API]
-            .requestMatchers("/api/test")
-            .hasAuthority(Authority.MASTER)
-
             // 기본적으로 모든 요청은 인증이 필요함
             .anyRequest().authenticated()
 
