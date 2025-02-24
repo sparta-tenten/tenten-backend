@@ -42,6 +42,7 @@ public class Menu extends BaseEntity {
     private MenuStatus status; // ENUM (판매중, 하루품절, 숨김)
 
     private String image;
+    private String category;
 
     @ManyToOne
     @JoinColumn(name = "store_id")
@@ -53,6 +54,11 @@ public class Menu extends BaseEntity {
     private String createdBy;
     private String updatedBy;
     private String deletedBy;
+
+
+    @Column(name = "deleted")
+    @Builder.Default
+    private boolean deleted = false;  // Soft Delete 플래그
 
 
     // Soft Delete 메서드 수정

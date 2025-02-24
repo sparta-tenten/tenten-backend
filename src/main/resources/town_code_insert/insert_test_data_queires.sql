@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 INSERT INTO p_user (user_name, password, email, role, address, detail_address, phone_number,
                     town_code)
 VALUES ('customer01', 'Password@123', 'customer01@example.com', 'CUSTOMER', '서울특별시 종로구',
@@ -18,18 +20,20 @@ VALUES ('550e8400-e29b-41d4-a716-446655440001', '양식', NOW(), NOW(), NULL, FA
 
 -- 2. 가게 (Store) 데이터 삽입
 INSERT INTO p_store (id, name, address, phone_number, image, user_id, category_id, town_code,
-                     created_at, updated_at, deleted_at, is_deleted)
+                     created_at, updated_at, deleted_at, is_deleted, store_grade,
+                     total_review_count)
 VALUES ('550e8400-e29b-41d4-a716-446655440010', '김밥천국', '서울특별시 종로구 청운동 1-1', '010-1111-2222',
         'kimbap.jpg',
         2, '550e8400-e29b-41d4-a716-446655440000',
-        '1111010100', NOW(), NOW(), NULL, FALSE);
+        '1111010100', NOW(), NOW(), NULL, FALSE, 0, 0);
 
 INSERT INTO p_store (id, name, address, phone_number, image, user_id, category_id, town_code,
-                     created_at, updated_at, deleted_at, is_deleted)
+                     created_at, updated_at, deleted_at, is_deleted, store_grade,
+                     total_review_count)
 VALUES ('550e8400-e29b-41d4-a716-446655440001', '이탈리안 피자', '서울특별시 종로구 신교동 2-2', '010-2222-3333',
         'pizza.jpg',
         2, '550e8400-e29b-41d4-a716-446655440001',
-        '1111010200', NOW(), NOW(), NULL, FALSE);
+        '1111010200', NOW(), NOW(), NULL, FALSE, 0, 0);
 
 -- 3. 메뉴 (Menu) 데이터 삽입
 INSERT INTO p_menu (id, name, price, description, status, image, store_id, created_by, updated_by,
@@ -53,3 +57,5 @@ VALUES ('123e4567-e89b-12d3-a456-426614174000', '사이드 메뉴', 3000,
         '550e8400-e29b-41d4-a716-446655440101', 'admin', 'admin', NOW()),
        ('123e4567-e89b-12d3-a456-426614174003', '핫소스', 300, '550e8400-e29b-41d4-a716-446655440101',
         'admin', 'admin', NOW());
+
+COMMIT;

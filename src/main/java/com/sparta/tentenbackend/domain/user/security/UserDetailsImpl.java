@@ -35,16 +35,16 @@ public class UserDetailsImpl implements UserDetails {
         return Collections.singletonList(new SimpleGrantedAuthority(authority));
     }
 
+    @Override
+    public String getUsername() {
+        return user.getEmail();
+    }
 
     @Override
     public String getPassword() {
         return user.getPassword();  // 유저 비밀번호 반환
     }
 
-    @Override
-    public String getUsername() {
-        return user.getUserName();  // 유저 이름 반환
-    }
 
     @Override
     public boolean isAccountNonExpired() {

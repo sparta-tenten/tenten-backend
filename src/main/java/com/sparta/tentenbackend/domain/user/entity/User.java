@@ -20,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -36,13 +37,13 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String userName;
     @Column(nullable = false)
     @JsonIgnore
     private String password;
     @Column(nullable = false, unique = true)
-    @Email(message = "올바른 이메일 형식을 입력하세요.")
+  //  @Email(message = "올바른 이메일 형식을 입력하세요.")
     private String email;
 
     @Enumerated(value = EnumType.STRING)
@@ -74,13 +75,14 @@ public class User extends BaseEntity {
         this.town = town;
     }
 
-    public void userUpdate(String password, String email, String address, String detailAddress,
-        String phoneNumber) {
+    public void userUpdate(String userName,String password, String address, String detailAddress,
+        String phoneNumber,Town town) {
+        this.userName = userName;
         this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
         this.address = address;
         this.detailAddress = detailAddress;
+        this.phoneNumber = phoneNumber;
+        this.town = town;
 
     }
 

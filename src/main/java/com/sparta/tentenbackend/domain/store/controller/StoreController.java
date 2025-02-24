@@ -3,7 +3,7 @@ package com.sparta.tentenbackend.domain.store.controller;
 import com.sparta.tentenbackend.domain.store.dto.StoreRequestDto;
 import com.sparta.tentenbackend.domain.store.dto.StoreResponseDto;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
-import com.sparta.tentenbackend.global.security.UserDetailsImpl;
+import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,16 @@ public class StoreController {
         @RequestParam(defaultValue = "createdAt") String sortBy,
         @RequestParam(defaultValue = "false") boolean isAsc
     ) {
-        Page<StoreResponseDto> stores = storeService.searchStores(keyword, categoryId, townCode, page, size, sortBy, isAsc);
+        Page<StoreResponseDto> stores = storeService.searchStores(keyword, categoryId, townCode,
+            page, size, sortBy, isAsc);
+        return ResponseEntity.ok(stores);
+    }
+
+    // --------------------------------------------------------------- //
+    // 카테고리별 가게 목록 조회
+    @GetMapping("/category")
+    public ResponseEntity<Page<StoreResponseDto>> getStoresByCategory(@RequestParam("categoryId") String categoryId, @RequestParam("storeName") String storeName, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
+        Page<StoreResponseDto> stores = storeService.findStoresByCategory(categoryId, storeName, page - 1, size, sortBy, isAsc);
         return ResponseEntity.ok(stores);
     }
 
