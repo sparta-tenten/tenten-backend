@@ -89,7 +89,8 @@ public class WebSecurityConfig {
 //                UserRoleEnum.Authority.MASTER)
 
                 .requestMatchers("/api/owner/order/**")
-                .hasAuthority(UserRoleEnum.Authority.OWNER)
+                .hasAnyAuthority(UserRoleEnum.Authority.OWNER, UserRoleEnum.Authority.MANAGER,
+                    UserRoleEnum.Authority.MASTER)
 
                 .requestMatchers("/api/owner/menu/**")
                 .hasAnyAuthority(UserRoleEnum.Authority.OWNER, UserRoleEnum.Authority.MANAGER,

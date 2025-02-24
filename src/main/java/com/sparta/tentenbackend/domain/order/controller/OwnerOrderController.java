@@ -1,5 +1,6 @@
 package com.sparta.tentenbackend.domain.order.controller;
 
+import com.sparta.tentenbackend.domain.order.annotation.CheckOrderOwner;
 import com.sparta.tentenbackend.domain.order.dto.OrderRequest;
 import com.sparta.tentenbackend.domain.order.dto.OrderResponse;
 import com.sparta.tentenbackend.domain.order.dto.OrderSearchRequest;
@@ -52,27 +53,27 @@ public class OwnerOrderController {
 
     @PatchMapping("/{orderId}")
     @Operation(summary = "주문 상태 변경")
-    public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        orderService.updateOrderStatus(orderId, userDetails.getUser());
+    @CheckOrderOwner
+    public ResponseEntity<Void> updateOrderStatus(@PathVariable UUID orderId) {
+        orderService.updateOrderStatus(orderId);
 
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/accept/{orderId}")
     @Operation(summary = "주문 수락하기")
-    public ResponseEntity<Void> acceptOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
-    UserDetailsImpl userDetails) {
-        orderService.acceptOrder(orderId, userDetails.getUser());
+    @CheckOrderOwner
+    public ResponseEntity<Void> acceptOrder(@PathVariable UUID orderId) {
+        orderService.acceptOrder(orderId);
 
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/reject/{orderId}")
     @Operation(summary = "주문 거부하기")
-    public ResponseEntity<Void> rejectOrder(@PathVariable UUID orderId, @AuthenticationPrincipal
-    UserDetailsImpl userDetails) {
-        orderService.rejectOrder(orderId, userDetails.getUser());
+    @CheckOrderOwner
+    public ResponseEntity<Void> rejectOrder(@PathVariable UUID orderId) {
+        orderService.rejectOrder(orderId);
 
         return ResponseEntity.noContent().build();
     }
@@ -97,6 +98,7 @@ public class OwnerOrderController {
 
     @PostMapping("/cancel/{orderId}")
     @Operation(summary = "사장님 주문 취소하기")
+    @CheckOrderOwner
     public ResponseEntity<Void> cancelOrder(@PathVariable UUID orderId,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         orderService.cancelOrderForOwner(orderId, userDetails.getUser());

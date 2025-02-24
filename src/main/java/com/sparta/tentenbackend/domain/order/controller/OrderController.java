@@ -73,13 +73,14 @@ public class OrderController {
     }
 
 
-    @PostMapping
+    @PostMapping("/{orderId}")
     @Operation(summary = "주문하가")
     public ResponseEntity<OrderResponse> orderForCustomer(
+        @PathVariable UUID orderId,
         @RequestBody @Valid OrderRequest req,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
-            new OrderResponse(orderService.orderForCustomer(req, userDetails.getUser())));
+            new OrderResponse(orderService.orderForCustomer(orderId, req, userDetails.getUser())));
     }
 
     @PostMapping("/cancel/{orderId}")

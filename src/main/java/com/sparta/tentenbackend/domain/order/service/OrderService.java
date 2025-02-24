@@ -7,17 +7,15 @@ import java.util.UUID;
 
 public interface OrderService {
 
-    Order orderForCustomer(OrderRequest req, User user);
+    Order orderForCustomer(UUID orderId, OrderRequest req, User user);
 
     void cancelOrder(UUID orderId, User user);
 
-    void updateOrderStatus(UUID orderId, User owner);
+    void updateOrderStatus(UUID orderId);
 
-    void acceptOrder(UUID orderId, User owner);
+    void acceptOrder(UUID orderId);
 
-    void rejectOrder(UUID orderId, User owner);
-
-    void checkOwner(Order order, User owner);
+    void rejectOrder(UUID orderId);
 
     Order deliveryOrderForOwner(OrderRequest req, User owner);
 

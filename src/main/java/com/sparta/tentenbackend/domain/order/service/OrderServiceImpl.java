@@ -19,7 +19,6 @@ import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.service.StoreService;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.exception.BadRequestException;
-import com.sparta.tentenbackend.global.exception.UnauthorizedException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,16 +45,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Order orderForCustomer(OrderRequest req, User user) {
-        if (!paymentService.isPaymentCompleted(req.getOrderId())) {
+    public Order orderForCustomer(UUID orderId, OrderRequest req, User user) {
+        Order order = orderRepositoryService.getOrderById(orderId);
+
+        if (!paymentService.isPaymentCompleted(req.getOrderId()) ||
+            !order.getOrderStatus().equals(OrderStatus.PAYMENT_COMPLETED)) {
             throw new BadRequestException("결제가 완료 되지 않은 주문입니다.");
         }
 
-        Order order = orderRepositoryService.getOrderById(req.getOrderId());
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("유저가 일치하지 않습니다!");
+        }
 
-        if (!order.getUser().getId().equals(user.getId()) ||
-            order.getStore().getId().equals(req.getStoreId())) {
-            throw new BadRequestException();
+        if (!order.getStore().getId().equals(req.getStoreId())) {
+            throw new BadRequestException("가게가 일치하지 않습니다!");
         }
 
         setDeliveryInfo(req, order);
@@ -88,10 +91,6 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrderForOwner(UUID orderId, User owner) {
         Order order = orderRepositoryService.getOrderById(orderId);
 
-        if (!order.getUser().getId().equals(owner.getId())) {
-            throw new BadRequestException("소유 가게의 주문이 아닙니다!");
-        }
-
         if (order.getOrderStatus().equals(OrderStatus.DELIVERY_COMPLETED) ||
             order.getOrderStatus().equals(OrderStatus.PICKED_UP)) {
             throw new BadRequestException("주문 취소 가능한 상태가 아닙니다!");
@@ -102,11 +101,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateOrderStatus(UUID orderId, User owner) {
+    public void updateOrderStatus(UUID orderId) {
         Order order = orderRepositoryService.getOrderById(orderId);
         OrderStatus status = order.getOrderStatus();
-
-        checkOwner(order, owner);
 
         switch (status) {
             case ORDER_RECEIVED:
@@ -134,10 +131,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void acceptOrder(UUID orderId, User owner) {
+    public void acceptOrder(UUID orderId) {
         Order order = orderRepositoryService.getOrderById(orderId);
-
-        checkOwner(order, owner);
 
         if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
             throw new BadRequestException("주문 수락이 가능한 상태가 아닙니다!");
@@ -149,10 +144,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void rejectOrder(UUID orderId, User owner) {
+    public void rejectOrder(UUID orderId) {
         Order order = orderRepositoryService.getOrderById(orderId);
-
-        checkOwner(order, owner);
 
         if (!order.getOrderStatus().equals(OrderStatus.WAITING_ORDER_RECEIVE)) {
             throw new BadRequestException("주문 거절이 가능한 상태가 아닙니다!");
@@ -161,21 +154,11 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(OrderStatus.REJECTED);
     }
 
-    // TODO AOP로 빼기
-    @Override
-    public void checkOwner(Order order, User owner) {
-        if (!order.getStore().getUser().getId().equals(owner.getId())) {
-            throw new UnauthorizedException("가게 주인이 아닙니다!");
-        }
-    }
-
     @Override
     @Transactional
     public Order deliveryOrderForOwner(OrderRequest req, User owner) {
         Store store = storeService.getStoreById(req.getStoreId());
         Order order = new Order(DeliveryType.DELIVERY, store);
-
-        checkOwner(order, owner);
 
         setDeliveryInfo(req, order);
         order.setRequest(req.getRequest());
@@ -195,8 +178,6 @@ public class OrderServiceImpl implements OrderService {
     public Order pickupOrderForOwner(OrderRequest req, User owner) {
         Store store = storeService.getStoreById(req.getStoreId());
         Order order = new Order(DeliveryType.DELIVERY, store);
-
-        checkOwner(order, owner);
 
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
         setMenuList(order, req.getOrderMenuRequestList());
