@@ -39,7 +39,8 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
     @Transactional(readOnly = true)
     public Page<DeliveryAddress> getDeliveryList(User user, Pageable pageable,
         Direction sortDirection, CommonSortBy sortBy, String keyword) {
-        return deliveryAddressRepositoryQuery.getOrderList(user, pageable, sortDirection, sortBy,
+        return deliveryAddressRepositoryQuery.getDeliveryAddressList(user, pageable, sortDirection,
+            sortBy,
             keyword);
     }
 

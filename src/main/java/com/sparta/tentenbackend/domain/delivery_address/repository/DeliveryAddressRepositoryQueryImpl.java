@@ -26,7 +26,8 @@ public class DeliveryAddressRepositoryQueryImpl implements DeliveryAddressReposi
     QDeliveryAddress deliveryAddress = QDeliveryAddress.deliveryAddress;
 
     @Override
-    public Page<DeliveryAddress> getOrderList(User user, Pageable pageable, Direction sortDirection,
+    public Page<DeliveryAddress> getDeliveryAddressList(User user, Pageable pageable,
+        Direction sortDirection,
         CommonSortBy sortBy, String keyword) {
 
         BooleanBuilder builder = new BooleanBuilder();

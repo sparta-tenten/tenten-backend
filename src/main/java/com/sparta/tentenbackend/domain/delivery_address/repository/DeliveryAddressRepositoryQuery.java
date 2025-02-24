@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 public interface DeliveryAddressRepositoryQuery {
 
-    Page<DeliveryAddress> getOrderList(User user, Pageable pageable, Direction sortDirection,
+    Page<DeliveryAddress> getDeliveryAddressList(User user, Pageable pageable,
+        Direction sortDirection,
         CommonSortBy sortBy, String keyword);
 }
