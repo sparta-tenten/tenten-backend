@@ -11,12 +11,14 @@ import com.sparta.tentenbackend.domain.order.entity.OrderStatus;
 import com.sparta.tentenbackend.domain.order.service.OrderRepositoryService;
 import com.sparta.tentenbackend.domain.order.service.OrderService;
 import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
+import com.sparta.tentenbackend.global.util.PageUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,10 +47,13 @@ public class OrderController {
         @RequestParam(required = false) OrderStatus orderStatus,
         @RequestParam(required = false) String keyword,
         @RequestParam(defaultValue = "0", required = false) int page,
-        @RequestParam(defaultValue = "9", required = false) int size,
+        @RequestParam(defaultValue = "10", required = false) int size,
+        @RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection,
+        @RequestParam(defaultValue = "UPDATED_AT", required = false) PageUtils.CommonSortBy sortBy,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Page<Order> orderList = orderRepositoryService.getOrderList(
-            new OrderSearchRequest(categoryId, deliveryType, orderStatus, keyword, page, size),
+            new OrderSearchRequest(categoryId, deliveryType, orderStatus, keyword, page, size,
+                sortDirection, sortBy),
             userDetails.getUser());
 
         return ResponseEntity.ok(orderList.map(OrderResponse::new));
