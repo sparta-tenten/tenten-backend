@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -30,8 +31,8 @@ public class OwnerReview extends BaseEntity {
   @Column(nullable = false)
   private String content;
 
-  @OneToOne
-  @JoinColumn(name = "review_id", unique = true)
+  @ManyToOne
+  @JoinColumn(name = "review_id")
   private Review review;
 
   public OwnerReview(OwnerReviewRequestDto requestDto, Review review) {

@@ -142,8 +142,10 @@ public class ReviewServiceImpl implements ReviewService {
   @Override
   @Transactional
   public ReviewResponseDto modifyReview(UpdateReviewRequestDto requestDto, User user) throws IOException {
-    Review review = reviewRepository.findById(UUID.fromString(requestDto.getId())).orElseThrow(() ->
-        new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+    Review review = reviewRepository.findByIdAndIsDeletedFalse(UUID.fromString(requestDto.getId()));
+    if (review == null) {
+      throw new NotFoundException("해당 리뷰는 존재하지 않습니다.");
+    }
     // 리뷰 작성자 == 주문자 == 로그인 유저인지 확인하기
     if (review.getOrder().getUser().getId() != user.getId()) {
       throw new ForbiddenException("해당 리뷰의 작성자가 아닙니다.");
@@ -170,8 +172,10 @@ public class ReviewServiceImpl implements ReviewService {
   @Override
   @Transactional
   public void removeReview(String reviewId, User user) {
-    Review review = reviewRepository.findById(UUID.fromString(reviewId)).orElseThrow(() ->
-        new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+    Review review = reviewRepository.findByIdAndIsDeletedFalse(UUID.fromString(reviewId));
+    if (review == null) {
+      throw new NotFoundException("해당 리뷰는 존재하지 않습니다.");
+    }
     // 리뷰 작성자 == 주문자 == 로그인 유저인지 확인하기
     if (review.getOrder().getUser().getId() != user.getId()) {
       throw new ForbiddenException("해당 리뷰의 작성자가 아닙니다.");
