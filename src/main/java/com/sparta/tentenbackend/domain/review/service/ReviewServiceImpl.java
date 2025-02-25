@@ -6,7 +6,9 @@ import com.sparta.tentenbackend.domain.order.repository.OrderRepository;
 import com.sparta.tentenbackend.domain.review.dto.CreateReviewRequestDto;
 import com.sparta.tentenbackend.domain.review.dto.ReviewResponseDto;
 import com.sparta.tentenbackend.domain.review.dto.UpdateReviewRequestDto;
+import com.sparta.tentenbackend.domain.review.entity.OwnerReview;
 import com.sparta.tentenbackend.domain.review.entity.Review;
+import com.sparta.tentenbackend.domain.review.repository.OwnerReviewRepository;
 import com.sparta.tentenbackend.domain.review.repository.ReviewRepository;
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.domain.store.repository.StoreRepository;
@@ -33,6 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
   private final ReviewRepository reviewRepository;
   private final OrderRepository orderRepository;
   private final StoreRepository storeRepository;
+  private final OwnerReviewRepository ownerReviewRepository;
   private final S3Service s3Service;
 
   // TODO 주문 API 완성되면 주석 없얘고 테스트해보기
@@ -55,6 +58,11 @@ public class ReviewServiceImpl implements ReviewService {
     if (order.getOrderStatus() != OrderStatus.DELIVERY_COMPLETED) {
       throw new BadRequestException("리뷰는 배달완료된 주문에 대해서만 작성할 수 있습니다.");
     }
+    // 기존 리뷰가 있는 경우 예외 처리
+    Review existingReview = reviewRepository.findByOrder_IdAndIsDeletedFalse(orderId);
+    if (existingReview != null) {
+      throw new BadRequestException("리뷰가 이미 존재합니다.");
+    }
     // 파일이 존재하면 S3에 파일 업로드
     String imageUrl = null;
     if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
@@ -63,7 +71,7 @@ public class ReviewServiceImpl implements ReviewService {
     Review review = reviewRepository.save(new Review(requestDto, imageUrl, order));
     // 리뷰 생성시 가게 총 평점 합계, 총 리뷰 개수 저장
     Store store = order.getStore();
-    store.updateReviewStats(requestDto.getGrade());
+    store.updateReviewStats(review.getGrade());
     storeRepository.save(store);
     return new ReviewResponseDto(review);
   }
@@ -84,7 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
   public Page<ReviewResponseDto> findAllReviews(User user, int page, int size, String sortBy, boolean isAsc) {
     Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
     Sort sort = getSortByField(sortBy, direction);
-    Pageable pageable = PageRequest.of(page, size, sort);
+    Pageable pageable = PageRequest.of(page, getValidPageSize(size), sort);
 
     // review 테이블에 저장된 order로 order.getUser().getId() == user.getId() 인 리뷰 목록/isDeleted=false만 조회하기
     Page<Review> reviews = reviewRepository.findAllByOrder_User_IdAndIsDeletedFalse(user.getId(), pageable);
@@ -101,7 +109,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
   }
 
-  // 리뷰 검색
+  // 내가 작성한 리뷰 검색
   @Override
   public Page<ReviewResponseDto> searchReviewsByKeyword(User user, int searchType, String keyword, int page, int size, String sortBy, boolean isAsc) {
     Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -134,8 +142,10 @@ public class ReviewServiceImpl implements ReviewService {
   @Override
   @Transactional
   public ReviewResponseDto modifyReview(UpdateReviewRequestDto requestDto, User user) throws IOException {
-    Review review = reviewRepository.findById(UUID.fromString(requestDto.getId())).orElseThrow(() ->
-        new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+    Review review = reviewRepository.findByIdAndIsDeletedFalse(UUID.fromString(requestDto.getId()));
+    if (review == null) {
+      throw new NotFoundException("해당 리뷰는 존재하지 않습니다.");
+    }
     // 리뷰 작성자 == 주문자 == 로그인 유저인지 확인하기
     if (review.getOrder().getUser().getId() != user.getId()) {
       throw new ForbiddenException("해당 리뷰의 작성자가 아닙니다.");
@@ -144,7 +154,9 @@ public class ReviewServiceImpl implements ReviewService {
     int oldGrade = review.getGrade(); // 기존 평점
     // 파일이 존재하면 파일 대체
     String imageUrl = null;
-    if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
+    if (review.getImage() == null) {
+      imageUrl = s3Service.uploadFile(requestDto.getFile());
+    } else {
       imageUrl = s3Service.updateFile(review.getImage(), requestDto.getFile());
     }
     // 리뷰 내용 업데이트
@@ -160,16 +172,21 @@ public class ReviewServiceImpl implements ReviewService {
   @Override
   @Transactional
   public void removeReview(String reviewId, User user) {
-    Review review = reviewRepository.findById(UUID.fromString(reviewId)).orElseThrow(() ->
-        new NotFoundException("해당 리뷰는 존재하지 않습니다."));
+    Review review = reviewRepository.findByIdAndIsDeletedFalse(UUID.fromString(reviewId));
+    if (review == null) {
+      throw new NotFoundException("해당 리뷰는 존재하지 않습니다.");
+    }
     // 리뷰 작성자 == 주문자 == 로그인 유저인지 확인하기
     if (review.getOrder().getUser().getId() != user.getId()) {
       throw new ForbiddenException("해당 리뷰의 작성자가 아닙니다.");
     }
     Store store = review.getOrder().getStore();
-    s3Service.deleteFile(review.getImage());
-    review.markAsDeleted();
-    store.removeReviewStats(review.getGrade());
+    // 저장된 이미지 파일이 있는 경우 이미지 파일 삭제 > soft delete 삭제 안함
+//    if (review.getImage() != null && !review.getImage().isEmpty()) {
+//      s3Service.deleteFile(review.getImage());
+//    }
+    review.markAsDeleted(); // review.isDeleted=true
+    store.removeReviewStats(review.getGrade()); // 가게 평점에서 해당 review 제외
     reviewRepository.save(review);
     storeRepository.save(store);
   }

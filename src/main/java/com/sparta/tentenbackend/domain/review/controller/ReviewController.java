@@ -65,7 +65,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
 
-    // 리뷰 검색
+
+    // 내가 쓴 리뷰 검색
     @GetMapping("/search")
     public ResponseEntity<Page<ReviewResponseDto>> searchReviewsByKeyword(
         @AuthenticationPrincipal UserDetailsImpl userDetails,

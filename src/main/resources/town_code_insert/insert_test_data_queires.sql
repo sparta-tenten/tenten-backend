@@ -22,7 +22,7 @@ INSERT INTO p_store (id, name, address, phone_number, image, user_id, category_i
                      total_review_count)
 VALUES ('550e8400-e29b-41d4-a716-446655440010', '김밥천국', '서울특별시 종로구 청운동 1-1', '010-1111-2222',
         'kimbap.jpg',
-        6, '550e8400-e29b-41d4-a716-446655440000',
+        1, '550e8400-e29b-41d4-a716-446655440000',
         '1111010100', NOW(), NOW(), NULL, FALSE, 0, 0);
 
 INSERT INTO p_store (id, name, address, phone_number, image, user_id, category_id, town_code,
@@ -30,7 +30,7 @@ INSERT INTO p_store (id, name, address, phone_number, image, user_id, category_i
                      total_review_count)
 VALUES ('550e8400-e29b-41d4-a716-446655440001', '이탈리안 피자', '서울특별시 종로구 신교동 2-2', '010-2222-3333',
         'pizza.jpg',
-        6, '550e8400-e29b-41d4-a716-446655440001',
+        1, '550e8400-e29b-41d4-a716-446655440001',
         '1111010200', NOW(), NOW(), NULL, FALSE, 0, 0);
 
 -- 3. 메뉴 (Menu) 데이터 삽입
