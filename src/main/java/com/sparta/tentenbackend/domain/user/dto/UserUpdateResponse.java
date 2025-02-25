@@ -15,7 +15,7 @@ public class UserUpdateResponse {
     private String address;
     private String detailAddress;
     private String phoneNumber;
-    private Town town;
+    private String townCode;
 
 }
 
