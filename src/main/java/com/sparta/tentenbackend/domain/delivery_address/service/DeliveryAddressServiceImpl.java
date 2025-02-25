@@ -4,14 +4,17 @@ import com.sparta.tentenbackend.domain.delivery_address.dto.CreateDeliveryAddres
 import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddressRequest;
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.delivery_address.repository.DeliveryAddressRepository;
+import com.sparta.tentenbackend.domain.delivery_address.repository.DeliveryAddressRepositoryQuery;
 import com.sparta.tentenbackend.domain.region.entity.Town;
 import com.sparta.tentenbackend.domain.region.service.TownService;
 import com.sparta.tentenbackend.domain.user.entity.User;
 import com.sparta.tentenbackend.global.exception.BadRequestException;
+import com.sparta.tentenbackend.global.util.PageUtils.CommonSortBy;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
     private final DeliveryAddressRepository deliveryAddressRepository;
+    private final DeliveryAddressRepositoryQuery deliveryAddressRepositoryQuery;
     private final TownService townService;
 
     @Override
@@ -33,8 +37,11 @@ public class DeliveryAddressServiceImpl implements DeliveryAddressService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DeliveryAddress> getDeliveryList(User user, Pageable pageable) {
-        return deliveryAddressRepository.findAllByUserId(user.getId(), pageable);
+    public Page<DeliveryAddress> getDeliveryList(User user, Pageable pageable,
+        Direction sortDirection, CommonSortBy sortBy, String keyword) {
+        return deliveryAddressRepositoryQuery.getDeliveryAddressList(user, pageable, sortDirection,
+            sortBy,
+            keyword);
     }
 
     @Override

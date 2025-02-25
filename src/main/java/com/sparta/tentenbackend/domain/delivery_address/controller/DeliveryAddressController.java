@@ -6,13 +6,14 @@ import com.sparta.tentenbackend.domain.delivery_address.dto.UpdateDeliveryAddres
 import com.sparta.tentenbackend.domain.delivery_address.entity.DeliveryAddress;
 import com.sparta.tentenbackend.domain.delivery_address.service.DeliveryAddressService;
 import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
+import com.sparta.tentenbackend.global.util.PageUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Delivery Address", description = "배송지 관련 API")
@@ -47,11 +49,16 @@ public class DeliveryAddressController {
     @GetMapping
     @Operation(summary = "배송지 목록 조회")
     public ResponseEntity<Page<DeliveryAddressResponse>> getAllDeliveryAddress(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        Pageable pageable
+        @RequestParam(defaultValue = "0", required = false) int page,
+        @RequestParam(defaultValue = "10", required = false) int size,
+        @RequestParam(defaultValue = "DESC", required = false) Sort.Direction sortDirection,
+        @RequestParam(defaultValue = "UPDATED_AT", required = false) PageUtils.CommonSortBy sortBy,
+        @RequestParam(required = false) String keyword,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Page<DeliveryAddress> deliveryAddressList = deliveryAddressService.getDeliveryList(
-            userDetails.getUser(), pageable);
+            userDetails.getUser(),
+            PageUtils.pageable(page, size), sortDirection, sortBy, keyword);
 
         return ResponseEntity.ok(deliveryAddressList.map(DeliveryAddressResponse::new));
     }
