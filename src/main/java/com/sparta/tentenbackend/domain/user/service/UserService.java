@@ -128,7 +128,7 @@ public class UserService {
         userRepository.save(user);
 
         return new UserUpdateResponse(requestDto.getUserName(), email, requestDto.getAddress(),
-            requestDto.getDetailAddress(), requestDto.getDetailAddress(), town);
+            requestDto.getDetailAddress(), requestDto.getDetailAddress(), town.getCode());
     }
 
 }
