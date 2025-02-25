@@ -165,6 +165,7 @@ public class OrderServiceImpl implements OrderService {
         order.setRequest(req.getRequest());
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
         order.setOrderedAt(LocalDateTime.now());
+        order.setMenuOrderList(new ArrayList<>());
         setMenuList(order, req.getOrderMenuRequestList());
 
         Payment payment = Payment.createWaitingPayment(order.getTotalPrice(), order);
@@ -183,6 +184,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
         order.setOrderedAt(LocalDateTime.now());
+        order.setMenuOrderList(new ArrayList<>());
         setMenuList(order, req.getOrderMenuRequestList());
 
         return orderRepository.save(order);
