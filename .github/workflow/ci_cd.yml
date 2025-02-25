@@ -1,0 +1,96 @@
+name: CI/CD
+on:
+  pull_request:
+    branches: [ "main" ]
+    types: [ "closed" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+      OWNER_SECRET_CODE: ${{ secrets.OWNER_SECRET_CODE }}
+      MANAGER_SECRET_CODE: ${{ secrets.MANAGER_SECRET_CODE }}
+      MASTER_SECRET_CODE: ${{ secrets.MASTER_SECRET_CODE }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL_NAME: ${{ secrets.GEMINI_MODEL_NAME }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4.4.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+
+      - name: Test with Gradle
+        run: ./gradlew test
+
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4.4.0
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Docker build & push
+        run: |
+          ./gradlew bootjar
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          port: ${{ secrets.EC2_SSH_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PEM_KEY }}
+          debug: true
+          script: |
+            rm .env
+            touch .env
+            echo "DB_URL=${{ secrets.DB_URL }}" >> .env
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+            echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+            echo "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" >> .env
+            echo "OWNER_SECRET_CODE=${{ secrets.OWNER_SECRET_CODE }}" >> .env
+            echo "MANAGER_SECRET_CODE=${{ secrets.MANAGER_SECRET_CODE }}" >> .env
+            echo "MASTER_SECRET_CODE=${{ secrets.MASTER_SECRET_CODE }}" >> .env
+            echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+            echo "GEMINI_MODEL_NAME=${{ secrets.GEMINI_MODEL_NAME }}" >> .env
+            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+            
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}
+            docker stop ${{ secrets.CONTAINER_NAME }} 
+            docker rm ${{ secrets.CONTAINER_NAME }}
+            docker run --name=${{ secrets.CONTAINER_NAME }} -d -p 8080:8080 -v $HOME/logs:/logs --env-file ./.env ${{ secrets.DOCKER_USERNAME }}/${{ secrets.IMAGE_NAME }}
+            docker container prune -f
+            docker image prune -f
