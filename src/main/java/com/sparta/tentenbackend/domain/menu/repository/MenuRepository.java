@@ -19,7 +19,7 @@ public interface MenuRepository extends JpaRepository<Menu, UUID> {
     List<Menu> findAllByIdIn(List<UUID> idList);
 
     // 검색 + 정렬 + 페이징을 위한 메서드
-    Page<Menu> findByStoreIdAndDeletedFalseAndNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+    Page<Menu> findByStoreIdAndIsDeletedFalseAndNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(
         UUID storeId,
         String nameKeyword,
         String categoryKeyword,

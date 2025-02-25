@@ -79,8 +79,17 @@ public class StoreController {
     // --------------------------------------------------------------- //
     // 카테고리별 가게 목록 조회
     @GetMapping("/category")
-    public ResponseEntity<Page<StoreResponseDto>> getStoresByCategory(@RequestParam("categoryId") String categoryId, @RequestParam("storeName") String storeName, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("isAsc") boolean isAsc) {
-        Page<StoreResponseDto> stores = storeService.findStoresByCategory(categoryId, storeName, page - 1, size, sortBy, isAsc);
+    public ResponseEntity<Page<StoreResponseDto>> getStoresByCategory(
+        @RequestParam String categoryId,
+        @RequestParam(required = false) String storeName,
+        @RequestParam(defaultValue = "0", required = false) int page,
+        @RequestParam(defaultValue = "10", required = false) int size,
+        @RequestParam(defaultValue = "createdAt", required = false) String sortBy,
+        @RequestParam(defaultValue = "true", required = false) boolean isAsc,
+        @RequestParam(required = false) String townCode
+    ) {
+        Page<StoreResponseDto> stores = storeService.findStoresByCategory(categoryId, storeName,
+            townCode, page, size, sortBy, isAsc);
         return ResponseEntity.ok(stores);
     }
 

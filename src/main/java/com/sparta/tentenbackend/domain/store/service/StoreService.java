@@ -129,7 +129,7 @@ public class StoreService {
     }
 
     public Page<StoreResponseDto> findStoresByCategory(String categoryId, String storeName,
-        int page, int size, String sortBy, boolean isAsc) {
+        String townCode, int page, int size, String sortBy, boolean isAsc) {
         if (categoryId == null) {
             throw new BadRequestException("카테고리를 선택하세요.");
         }
@@ -137,7 +137,7 @@ public class StoreService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, getValidPageSize(size), sort);
         Page<Store> stores = storeRepository.findStoresByCategory(UUID.fromString(categoryId),
-            storeName, sortBy, isAsc, pageable);
+            storeName, townCode, sortBy, isAsc, pageable);
         return stores.map(StoreResponseDto::new);
     }
 
