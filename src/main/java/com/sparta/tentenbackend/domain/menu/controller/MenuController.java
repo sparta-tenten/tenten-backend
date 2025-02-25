@@ -5,6 +5,7 @@ import com.sparta.tentenbackend.domain.menu.entity.Menu;
 import com.sparta.tentenbackend.domain.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,5 +49,20 @@ public class MenuController {
   public ResponseEntity<Void> deleteMenu(@PathVariable UUID menuId) {
     menuService.deleteMenu(menuId);
     return ResponseEntity.noContent().build();
+  }
+
+
+  // 검색/정렬/페이징 기능
+  @GetMapping("/{storeId}/search")
+  public ResponseEntity<Page<MenuDto>> searchMenus(
+      @PathVariable UUID storeId,
+      @RequestParam(required = false, defaultValue = "") String keyword,
+      @RequestParam(required = false, defaultValue = "price") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String direction,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "10") int size
+  ) {
+    Page<MenuDto> menus = menuService.searchMenus(storeId, keyword, sortBy, direction, page, size);
+    return ResponseEntity.ok(menus);
   }
 }
