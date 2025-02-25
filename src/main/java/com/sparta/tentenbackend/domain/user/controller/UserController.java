@@ -1,8 +1,9 @@
-
 package com.sparta.tentenbackend.domain.user.controller;
 
 
-import com.sparta.tentenbackend.domain.region.entity.Town;
+import com.sparta.tentenbackend.domain.jwt.JwtUtil;
+import com.sparta.tentenbackend.domain.jwt.service.JwtBlacklistService;
+import com.sparta.tentenbackend.domain.user.dto.LoginRequestDto;
 import com.sparta.tentenbackend.domain.user.dto.SignupRequestDto;
 import com.sparta.tentenbackend.domain.user.dto.UserProfileResponseDto;
 import com.sparta.tentenbackend.domain.user.dto.UserUpdateRequestDto;
@@ -12,26 +13,19 @@ import com.sparta.tentenbackend.domain.user.security.UserDetailsImpl;
 import com.sparta.tentenbackend.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import com.sparta.tentenbackend.domain.jwt.JwtUtil;
-import com.sparta.tentenbackend.domain.jwt.service.JwtBlacklistService;
-import com.sparta.tentenbackend.domain.user.dto.LoginRequestDto;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -120,15 +114,4 @@ public class UserController {
 
         return ResponseEntity.ok(userService.deleteUser(userDetails));
     }
-
-
-    @GetMapping("/test")
-    @Operation(summary = "유저 정보 조회")
-    public ResponseEntity<?> getTest(
-    ) {
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("권한부여 완료");
-    }
-
-
 }

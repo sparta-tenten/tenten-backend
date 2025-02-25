@@ -33,6 +33,7 @@ public class DeliveryAddressRepositoryQueryImpl implements DeliveryAddressReposi
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(deliveryAddress.user.id.eq(user.getId()));
+        builder.and(deliveryAddress.isDeleted.eq(false));
         if (keyword != null && !keyword.isBlank()) {
             builder.and(deliveryAddress.name.containsIgnoreCase(keyword));
         }
