@@ -83,6 +83,9 @@ public class Order extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime acceptedAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime orderedAt;
+
     public Order(Long totalPrice, DeliveryType deliveryType, OrderType orderType,
         OrderStatus orderStatus) {
         this.totalPrice = totalPrice;
