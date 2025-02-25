@@ -14,11 +14,13 @@ public class TemporaryOrderResponse {
     private final OrderType orderType;
     private final OrderStatus orderStatus;
     private final UUID storeId;
+    private final UUID orderId;
 
     public TemporaryOrderResponse(Order order) {
         this.deliveryType = order.getDeliveryType();
         this.orderType = order.getOrderType();
         this.storeId = order.getStore().getId();
         this.orderStatus = order.getOrderStatus();
+        this.orderId = order.getId();
     }
 }
