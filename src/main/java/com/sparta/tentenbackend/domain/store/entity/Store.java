@@ -67,6 +67,7 @@ public class Store extends BaseEntity {
         this.image = image;
         this.user = user;
         this.category = category;
+        this.town = town;
     }
 
     // ------------------------------------------------------------------- // 리뷰 생성, 수정, 삭제

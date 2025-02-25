@@ -22,7 +22,6 @@ public class OrderRequest {
     private DeliveryType deliveryType;
     @ValidEnum(enumClass = OrderType.class)
     private OrderType orderType;
-    @ValidUUID
     private UUID orderId;
     @ValidUUID
     private UUID storeId;

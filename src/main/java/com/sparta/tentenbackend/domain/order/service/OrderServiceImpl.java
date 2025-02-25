@@ -64,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
         setDeliveryInfo(req, order);
         order.setRequest(req.getRequest());
         order.setOrderStatus(OrderStatus.WAITING_ORDER_RECEIVE);
+        order.setOrderedAt(LocalDateTime.now());
         setMenuList(order, req.getOrderMenuRequestList());
 
         return orderRepository.save(order);
@@ -79,8 +80,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (order.getOrderStatus() != OrderStatus.WAITING_ORDER_RECEIVE ||
-            LocalDateTime.now().isAfter(order.getCreatedAt().plusMinutes(5))) {
-            throw new BadRequestException("주문 접수 대기 중이거나 주문 생성 후 5분 전에 취소할 수 있습니다!");
+            LocalDateTime.now().isAfter(order.getOrderedAt().plusMinutes(5))) {
+            throw new BadRequestException("주문 접수 대기 중이거나 주문 요청 후 5분 전에 취소할 수 있습니다!");
         }
 
         order.cancel(user);
@@ -163,6 +164,8 @@ public class OrderServiceImpl implements OrderService {
         setDeliveryInfo(req, order);
         order.setRequest(req.getRequest());
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+        order.setOrderedAt(LocalDateTime.now());
+        order.setMenuOrderList(new ArrayList<>());
         setMenuList(order, req.getOrderMenuRequestList());
 
         Payment payment = Payment.createWaitingPayment(order.getTotalPrice(), order);
@@ -180,6 +183,8 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order(DeliveryType.DELIVERY, store);
 
         order.setOrderStatus(OrderStatus.ORDER_RECEIVED);
+        order.setOrderedAt(LocalDateTime.now());
+        order.setMenuOrderList(new ArrayList<>());
         setMenuList(order, req.getOrderMenuRequestList());
 
         return orderRepository.save(order);

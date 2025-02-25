@@ -22,7 +22,7 @@ public class OrderMenuResponse {
         this.name = menu.getName();
         this.price = menu.getPrice();
         this.quantity = menuOrder.getQuantity();
-        this.orderOptionResponseList = menu.getMenuOptionList().stream()
+        this.orderOptionResponseList = menuOrder.getMenuOrderOptionList().stream()
             .map(OrderOptionResponse::new).collect(
                 Collectors.toList());
     }

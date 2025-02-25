@@ -2,6 +2,8 @@ package com.sparta.tentenbackend.domain.store.service;
 
 import com.sparta.tentenbackend.domain.category.entity.Category;
 import com.sparta.tentenbackend.domain.category.repository.CategoryRepository;
+import com.sparta.tentenbackend.domain.region.entity.Town;
+import com.sparta.tentenbackend.domain.region.service.TownService;
 import com.sparta.tentenbackend.domain.store.dto.StoreRequestDto;
 import com.sparta.tentenbackend.domain.store.dto.StoreResponseDto;
 import com.sparta.tentenbackend.domain.store.entity.Store;
@@ -28,6 +30,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final CategoryRepository categoryRepository;
+    private final TownService townService;
 
     // 가게 생성
     @Transactional
@@ -36,6 +39,8 @@ public class StoreService {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
             .orElseThrow(() -> new NotFoundException("Category not found"));
 
+        Town town = townService.getTownByCode(requestDto.getTownCode());
+
         Store store = new Store(
             requestDto.getName(),
             requestDto.getAddress(),
@@ -43,7 +48,7 @@ public class StoreService {
             requestDto.getImage(),
             user,
             category,
-            requestDto.getTown()
+            town
         );
 
         storeRepository.save(store);
@@ -96,9 +101,11 @@ public class StoreService {
     }
 
     // 스토어 검색/정렬 메서드
-    public Page<StoreResponseDto> searchStores(String keyword, UUID categoryId, String townCode, int page, int size, String sortBy, boolean isAsc) {
+    public Page<StoreResponseDto> searchStores(String keyword, UUID categoryId, String townCode,
+        int page, int size, String sortBy, boolean isAsc) {
 
-        Pageable pageable = PageRequest.of(page, size, isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page, size,
+            isAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
         // 동적 쿼리 생성
         Specification<Store> spec = Specification.where(null);
@@ -108,7 +115,8 @@ public class StoreService {
         }
 
         if (categoryId != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId));
+            spec = spec.and(
+                (root, query, cb) -> cb.equal(root.get("category").get("id"), categoryId));
         }
 
         if (townCode != null && !townCode.isEmpty()) {
@@ -120,14 +128,16 @@ public class StoreService {
         return storePage.map(StoreResponseDto::new);
     }
 
-    public Page<StoreResponseDto> findStoresByCategory(String categoryId, String storeName, int page, int size, String sortBy, boolean isAsc) {
+    public Page<StoreResponseDto> findStoresByCategory(String categoryId, String storeName,
+        int page, int size, String sortBy, boolean isAsc) {
         if (categoryId == null) {
             throw new BadRequestException("카테고리를 선택하세요.");
         }
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, getValidPageSize(size), sort);
-        Page<Store> stores = storeRepository.findStoresByCategory(UUID.fromString(categoryId), storeName, sortBy, isAsc, pageable);
+        Page<Store> stores = storeRepository.findStoresByCategory(UUID.fromString(categoryId),
+            storeName, sortBy, isAsc, pageable);
         return stores.map(StoreResponseDto::new);
     }
 
