@@ -2,18 +2,28 @@ package com.sparta.tentenbackend.domain.menu.entity;
 
 import com.sparta.tentenbackend.domain.store.entity.Store;
 import com.sparta.tentenbackend.global.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "p_menu")
@@ -55,10 +65,9 @@ public class Menu extends BaseEntity {
     private String updatedBy;
     private String deletedBy;
 
-
-    @Column(name = "deleted")
-    @Builder.Default
-    private boolean deleted = false;  // Soft Delete 플래그
+//    @Column(name = "deleted")
+//    @Builder.Default
+//    private boolean deleted = false;  // Soft Delete 플래그
 
 
     // Soft Delete 메서드 수정
