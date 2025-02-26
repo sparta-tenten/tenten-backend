@@ -30,13 +30,13 @@ public class PageUtils {
         switch (sortBy) {
             case CREATED_AT -> {
                 return sortDirection == Sort.Direction.ASC
-                    ? entityPath.getDate("createdAt", LocalDateTime.class).asc()
-                    : entityPath.getDate("createdAt", LocalDateTime.class).desc();
+                    ? entityPath.getDateTime("createdAt", LocalDateTime.class).asc()
+                    : entityPath.getDateTime("createdAt", LocalDateTime.class).desc();
             }
             case UPDATED_AT -> {
                 return sortDirection == Sort.Direction.ASC
-                    ? entityPath.getDate("updatedAt", LocalDateTime.class).asc()
-                    : entityPath.getDate("updatedAt", LocalDateTime.class).desc();
+                    ? entityPath.getDateTime("updatedAt", LocalDateTime.class).asc()
+                    : entityPath.getDateTime("updatedAt", LocalDateTime.class).desc();
             }
             default -> throw new IllegalArgumentException("지원되지 않는 정렬 조건: " + sortBy);
         }
