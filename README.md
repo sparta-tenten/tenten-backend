@@ -1,3 +1,6 @@
+![image](https://github.com/user-attachments/assets/03fa5cc5-3d5d-49d4-8f8a-b241b4f66202)
+
+
 # 목차
 
 - 프로젝트 소개
